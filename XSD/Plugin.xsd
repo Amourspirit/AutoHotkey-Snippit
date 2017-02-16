@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.1">
+  <xs:annotation>
+    <xs:documentation>The Snippit to run. May be the name of a AutoHotkey file such as
+      mysnippit.ahk. If is value of AutoHotkey file then file (mysnippit.ahk) would most likely
+      conatin a label and the xml lable element would be set to this name</xs:documentation>
+  </xs:annotation>
+  <xs:element name="plugin">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="commands" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Commands Represent HotKeys in AutoHotkey</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="hotstrings" minOccurs="0"/>
+        <xs:element minOccurs="0" ref="includes">
+          <xs:annotation>
+            <xs:documentation>Includes work as general plugin and can contain hotstring, hotkeys or
+              other code. Pretty much all thing AutoHotkey can be used here. Include are more
+              advanced and in most cases you can accomplish what you need using Commands (hotkeys)
+              and hotstrings. Include have a less control generally speaking in the App. Include can
+              be enable and disabled as a whole but part of the include can not be disabled.
+              Hotstring and Commands (hotkeys) however can be enabled an disabled
+              individually.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" ref="dataItems">
+          <xs:annotation>
+            <xs:documentation>Data Items can consit of zero or more elemetns of dataItem.
+Each dataItem represents a file to be saved for consuming by Commands, Hotstring and Includes.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" use="required" type="version">
+        <xs:annotation>
+          <xs:documentation>The version of this plugin</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute default="0.5.0" name="minVersion" type="version">
+        <xs:annotation>
+          <xs:documentation>The Minium version of the app to run this plugin</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="profileName" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>The Name of the Profile this plugin belongs to</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute default="true" name="enabled" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>The enabled attribute gives a way to enable or disable an entire plugin
+            set. If enabled is false then all the the plugins in the root element will be
+            disabled</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="name" type="fileName" use="required">
+        <xs:annotation>
+          <xs:documentation>The name of the plugin. This name should be unique among all other
+            pluings within a profile. Recommended Naming convention of YourCompany-Name such as
+            Bigbyte-Hotstrings It is not recommended to append .xml to the end of the
+            name</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="schemaVersion" type="xs:decimal" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="commands">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="command" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>A command representing a Hotkey</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="placeholder" type="xs:string"/>
+  <xs:element name="command">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name">
+          <xs:annotation>
+            <xs:documentation>The name of the Command for Display purporses</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="description">
+          <xs:annotation>
+            <xs:documentation>The Description of what the comand does</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" ref="category">
+          <xs:annotation>
+            <xs:documentation>The category of the command</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="label" type="xs:NCName">
+          <xs:annotation>
+            <xs:documentation>The AutoHotkey label to run. This lable is required and must match a
+              label in the code element. The Label must not contain : (colon) charecter but however
+              the code label must. Example: lable is hello_world Code Example hello_world: MsgBox
+              Hello World return It is recommended that the Command have a unique name to avoid have
+              issues with other plugins in the same profile have the same name. A good idea might be
+              to append the plugin name in front of your label name. For instance if your Plugin
+              name is Hellos from the world and your Command Name is Hello World then a good label
+              name would be hellos_from_the_world_hello_world Having unique lable name will ensure
+              that other plugins in the same profile will not have any name
+              issues.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="snippit">
+          <xs:annotation>
+            <xs:documentation>Snippit for Command is the name of the Code file the represents your
+              code. This file will be included with the Main App this command is active. The name
+              has to be a valid file name. The file name is not requrired to have a file ext as .ahk
+              will be appended to the end of the file name if it is absent. It is Recommended the
+              Snippit Name be unique to this plugin. A good idea might be to append the plugin name
+              in front of your filename. For instance if your Plugin name is Hellos from the world
+              and your Command Name is Hello World then a good snippit name would be
+              hellos_from_the_world_hello_world Having unique snippit name will ensure that other
+              plugins in the same profile will not have any name issues.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element default="include" minOccurs="0" name="type" type="commandType">
+          <xs:annotation>
+            <xs:documentation>The type of the Command. The only type supported at this time is
+              inline.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="code">
+          <xs:annotation>
+            <xs:documentation>The Acutal code to run when the hotkey matches. The Value of the code
+              element will be written into the snippit file by that app. Eg: hello_world: MsgBox
+              Hello World return</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="hotkey" type="hotkeyType">
+        <xs:annotation>
+          <xs:documentation>The Hotkey to trigger the event such as !^YX (shift+ctrl+y x) This can
+            be two keys as in the example with 'Y' and 'X'. When two keys are used the modilfer keys
+            are required to be let go before the seccond key is pressed. Following the example above
+            shift+ctrl+y would be pressed and then let go and immeditaly followed by x to complete
+            the event.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute default="true" name="enabled" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>If False then the command will be disabled</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="label" type="xs:NCName"/>
+  <xs:element name="hotstrings">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="hotstring" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="hotstring">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name">
+          <xs:annotation>
+            <xs:documentation>The Name of the Hotstring for Display</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="description">
+          <xs:annotation>
+            <xs:documentation>The Description of the Hotstring</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="category" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>The Category of the Hotstring. Used to group and filter list of
+              hotstrings.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="forceclear">
+          <xs:annotation>
+            <xs:documentation>If true then an attempt will be made to clear all the text in the line
+              before the hotstring was typed.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="snippit" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Snippit will only apply if the type is set to snipFile. Snippit for
+              Hotstring is the name of the Code file the represents your code. This file will be
+              read when the hotstring is matched. The name has to be a valid file name. The file
+              name is not requrired to have a file ext as .snippit will be appended to the end of
+              the file name if it is absent. It is Recommended the Snippit Name be unique to this
+              plugin. A good idea might be to append the plugin name in front of your filename. For
+              instance if your Plugin name is Hellos from the world and your snippit Name is Hello
+              World then a good snippit name would be hellos_from_the_world_hello_world Having
+              unique snippit name will ensure that other plugins in the same profile will not have
+              any name issues.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="tabify" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>If True then a attemp will be made to preserve tabs before the
+              hotstring was typed.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="sendkeys" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>The keys to send after the hotstring replacement has been inserted.
+              These keys must be in a key formate supported by AutoHotkey Send. Example: {up
+              2}{left}{up}</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element default="Paste" minOccurs="0" name="type" type="hotstringType">
+          <xs:annotation>
+            <xs:documentation>The type of hotstring such as inline If the hotstrig is of type inline
+              then no snippit file is used or required. This is the recommended way to run
+              hotstrings. If the hotstring is of type snippitFile the the contents of the code will
+              will be written to the snnippit file and the App will read from the snippit file when
+              there is a match.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="code">
+          <xs:annotation>
+            <xs:documentation>The text to replace the hotstring match. eg:Hello
+              World</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="replacements" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Replacement Data to insert into the hotstring
+              replacement.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="hotStringOptions">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="hotStringOption"
+                type="HotStringOptionsEnum"/>
+            </xs:sequence>
+          </xs:complexType>
+          <xs:unique name="hotStringOption_unique">
+            <xs:selector xpath="hotStringOption"/>
+            <xs:field xpath="."/>
+          </xs:unique>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="trigger" use="required" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The sequence of typed keys that triggers the hotstring. This must be in
+            a format that would be accepted by AutoHotkey. Eg:hw</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute default="true" name="enabled" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>The State of the Hotstring (enabled or disabled). If disabled then this
+            hotstring will be ignored for a match.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="dataItems">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <xs:element maxOccurs="unbounded" minOccurs="0" ref="dataItem"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="code" type="xs:string"/>
+  <xs:element name="includes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="include" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Represents a indivigual include plugin.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="include">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name">
+          <xs:annotation>
+            <xs:documentation>The name of the include</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="description">
+          <xs:annotation>
+            <xs:documentation>The description of the include.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="snippit">
+          <xs:annotation>
+            <xs:documentation>Snippit for include is the name of the Code file the represents your
+              code. This file will be included with the Main App this include is active. The name
+              has to be a valid file name. The file name is not requrired to have a file ext as .ahk
+              will be appended to the end of the file name if it is absent. It is Recommended the
+              Snippit Name be unique to this plugin. A good idea might be to append the plugin name
+              in front of your filename. For instance if your Plugin name is Hellos from the world
+              and your Command Name is Hello World then a good snippit name would be
+              hellos_from_the_world_hello_world Having unique include name will ensure that other
+              plugins in the same profile will not have any name issues.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="code">
+          <xs:annotation>
+            <xs:documentation>This is the code of the hotstring and can contain any valid
+              AutoHotCode. If your code contains hotkeys or hotstring then then can be documented in
+              the include/commands and the include/hotstring section for this
+              include.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="hotstrings">
+          <xs:annotation>
+            <xs:documentation>Documents one or more Hotstrings in the include
+              file.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="hotstring" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Represents a single Hotstring in the include.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element ref="name">
+                      <xs:annotation>
+                        <xs:documentation>The Name of the Hotstring for Display</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" ref="description">
+                      <xs:annotation>
+                        <xs:documentation>The Description of the Hotstring</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" ref="category">
+                      <xs:annotation>
+                        <xs:documentation>The Category of the Hotstring. Used to group and filter
+                          list of hotstrings.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="trigger" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>The sequence of typed keys that triggers the
+                        hotstring</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element minOccurs="0" name="commands">
+          <xs:annotation>
+            <xs:documentation>Documents one or more Commands (hotkeys) in the include
+              file.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="command" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Represents a single Command (hotkey) in the
+                    include.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element ref="name">
+                      <xs:annotation>
+                        <xs:documentation>The Name of the Hotkey command for
+                          display</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" ref="description">
+                      <xs:annotation>
+                        <xs:documentation>The Description of the Hotkey command</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" ref="category">
+                      <xs:annotation>
+                        <xs:documentation>The Category of the HotKey command. Used to group and
+                          filter list of hotkeys.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="hotkey" type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>The Hotkey for the event such as ^p
+                        {ctrl+p}</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute default="true" name="enabled" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>If False then the include will be disabled</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="dataItem">
+    <xs:annotation>
+      <xs:documentation>Represents a Data Item that can be consumed in progrma.
+Data Item can be any type of file. The file will be written to disk using the dataFileName value.
+
+To Store a binary file as data first convert it to base64 and then place the Base64 text in the dataValue element. Alos set the encoded attribute to True.
+
+For text based files such as ini file or text files just plasce the text inside the dataValue element and set encoded attribute to false (default)
+
+Setting the overwrite attribute will cause the file to be overwritten each time the profile is reloaded. Setting to false (default) will ensure the dataItem Is not overwritten</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name">
+          <xs:annotation>
+            <xs:documentation>General Name of Data Item. For Display and reference Purposes.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="dataFileName">
+          <xs:annotation>
+            <xs:documentation>Then Name of the file that the Data Item will be saved to.
+This is just a file name with no path information.
+
+Make this file name unique to your plugin.
+Include an extension with your file name such as MyProjectFile1.txt</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" ref="dataValue">
+          <xs:annotation>
+            <xs:documentation>The content of the file.
+This can be any string value.
+If you want to insert binary file data then it must first be converted to base64 and the dataItem encoded attribute must be set to true.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute default="false" name="overwrite" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Default is false.
+If true then the contents of dataValue element will be rewritten to the disk each time he profile is reloaded.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute default="false" name="encoded" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Default is False
+If True then the contents of dataValue element will be decoded as base64 before being written to disk; Otherwise the contents will will be saved as text.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="dataFileName" type="fileName"/>
+  <xs:element name="dataValue" type="xs:string"/>
+  <xs:element name="category" type="xs:NCName" default="None"/>
+  <xs:element name="forceclear" type="xs:boolean" default="false"/>
+  <xs:element name="sendkeys" type="xs:string"/>
+  <xs:element name="tabify" type="xs:boolean" default="false"/>
+  <xs:element name="replacements">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element maxOccurs="unbounded" minOccurs="0" ref="inputReplacement">
+          <xs:annotation>
+            <xs:documentation>Represents a replacemet that will display a dialog to input a value to
+              be used a replacement.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" minOccurs="0" ref="inputFixedList">
+          <xs:annotation>
+            <xs:documentation>Represents a dialog with a predefined list to choose
+              from.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="inputReplacement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="placeholder">
+          <xs:annotation>
+            <xs:documentation>The Placeholder is the matching placeholder in the code to be replaced
+              with the value of the dialog</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="dialogtitle">
+          <xs:annotation>
+            <xs:documentation>The title of the dialog that is to be displayed.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="dialogtext">
+          <xs:annotation>
+            <xs:documentation>The Text of the Dialog that is to be displayed. This is usually a
+              short message instructing the end user what to do.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" ref="dialoginitialvalue">
+          <xs:annotation>
+            <xs:documentation>The initial value of the dialog. This can be other supported
+              placeholder such as %clipborad% ( which will place the content of the clipboard in the
+              dialog when it is first displayed ).</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="inputFixedList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="placeholder">
+          <xs:annotation>
+            <xs:documentation>The Placeholder is the matching placeholder in the code to be replaced
+              with the value of the dialog</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="dialogtitle">
+          <xs:annotation>
+            <xs:documentation>The title of the dialog that is to be displayed.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="dialogtext">
+          <xs:annotation>
+            <xs:documentation>The Text of the Dialog that is to be displayed. This is usually a
+              short message instructing the end user what to do.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="listValues"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="dialogtitle" type="xs:string"/>
+  <xs:element name="dialogtext" type="xs:string"/>
+  <xs:element name="dialoginitialvalue" type="xs:string"/>
+  <xs:element name="name" type="xs:string"/>
+  <xs:element name="description" type="xs:string"/>
+  <xs:element name="snippit" type="xs:string"/>
+
+  <xs:element name="listValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="listItem">
+          <xs:annotation>
+            <xs:documentation>A value to display in the list.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:unique name="UniqueDefaultItem">
+      <xs:selector xpath="listItem"/>
+      <xs:field xpath="@default"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="listItem" type="itemType"> </xs:element>
+  <xs:simpleType name="defaultType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="true"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="itemType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="default" type="defaultType" use="optional">
+          <xs:annotation>
+            <xs:documentation>Only one Item in the list can be marked as Default. If an item is
+              marked default then it will be the default selected list item when the dialog is first
+              displayed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="commandType">
+    <xs:annotation>
+      <xs:documentation>The type of command such as include</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="include"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="hotstringType">
+    <xs:annotation>
+      <xs:documentation>The type of hotstring such as inline</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UnKnown"/>
+      <xs:enumeration value="Paste"/>
+      <xs:enumeration value="Inline"/>
+      <xs:enumeration value="Code"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="HotStringOptionsEnum">
+    <xs:annotation>
+      <xs:documentation>The type of hotstring option</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TriggerInside"/>
+      <xs:enumeration value="AutomaticBackSpaceOff"/>
+      <xs:enumeration value="CaseSensitive"/>
+      <xs:enumeration value="NoConform"/>
+      <xs:enumeration value="OmitEndChar"/>
+      <xs:enumeration value="Send"/>
+      <xs:enumeration value="SendRaw"/>
+      <xs:enumeration value="SendInput"/>
+      <xs:enumeration value="SendPlay"/>
+      <xs:enumeration value="SendEvent"/>
+      <xs:enumeration value="ResetRecognizer"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="dialogType">
+    <xs:annotation>
+      <xs:documentation>The type of dialoug such as input</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="fixedList"/>
+      <xs:enumeration value="input"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="version">
+    <xs:annotation>
+      <xs:documentation>Limits string to version in format of #.# or #.#.# or
+        #.#.#.#</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="hotkeyType">
+    <xs:restriction base="xs:string">
+      <xs:pattern
+        value="[~&lt;>!#$+^*]*[a-zA-ZA0-9]+(\s[uU][pP])?|[~&lt;>!#$+^*]*[a-zA-Z0-9]+\s*&amp;\s*[a-zA-Z0-9]+"
+      />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="fileName">
+    <xs:annotation>
+      <xs:documentation>Limits String to between 2 and 200 chars and only safe file name chars.
+
+This regular expression is not perfect it will allow &lt; and > into the filename if they are xml encode. The application consuming the file will be responsible to ensure complet proper filename.
+Alos the range between 2 and 200 does not account for any xml encodig and therefor may not be an exact lentgth.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[^/|\\:\*\?&quot;&lt;>]{2,200}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="languageLocal">
+    <xs:annotation>
+      <xs:documentation>Language Local in the format aa-AA such as en-US</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-z]{2}-[A-Z]{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

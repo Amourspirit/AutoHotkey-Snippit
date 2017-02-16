@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" profileName="Windows Global" name="Control Panel Shortcuts" schemaVersion="1.1">
+  <commands>
+    <command hotkey="^#K">
+      <name>Keyboard properties</name>
+      <description>Displays Keyboard Properties</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_keyboard_properties</label>
+      <snippit>cp_keyboard_properties</snippit>
+      <code>cp_keyboard_properties:
+Run control main.cpl @1
+return</code>
+    </command>
+    <command hotkey="^#D">
+      <name>Desktop Properties</name>
+      <description>Displays Desktop Properties</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_desk</label>
+      <snippit>cp_desk</snippit>
+      <code>cp_desk:
+Run control desk.cpl
+return</code>
+    </command>
+    <command hotkey="^#M">
+      <name>Mouse Properties</name>
+      <description>Display Mouse Properties</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_mouse_properties</label>
+      <snippit>cp_mouse_properties</snippit>
+      <code>cp_mouse_properties:
+Run control main.cpl
+return</code>
+    </command>
+    <command hotkey="^#N">
+      <name>Network Connections</name>
+      <description>Display Network Connections</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_network_neg</label>
+      <snippit>cp_network_neg</snippit>
+      <code>cp_network_neg:
+Run control ncpa.cpl
+return</code>
+    </command>
+    <command hotkey="^#P">
+      <name>Power config</name>
+      <description>Displays Power Configuration</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_power_confg</label>
+      <snippit>cp_power_confg</snippit>
+      <code>cp_power_confg:
+Run control powercfg.cpl
+return</code>
+    </command>
+    <command hotkey="^#A">
+      <name>Add/remove</name>
+      <description>Starts Control Panel Add/Remove</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_add_remove</label>
+      <snippit>cp_add_remove</snippit>
+      <code>cp_add_remove:
+Run control appwiz.cpl
+return</code>
+    </command>
+    <command hotkey="^#I">
+      <name>Internet Explorerr Options</name>
+      <description>Starts Internet Explorer Options</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_inet_xp_top</label>
+      <snippit>cp_inet_xp_top</snippit>
+      <code>cp_inet_xp_top:
+Run control inetcpl.cpl
+return</code>
+    </command>
+    <command hotkey="^#U">
+      <name>Control Panel User Accounts</name>
+      <description>Starts User Accounts settings</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_user_accounts</label>
+      <snippit>cp_user_accounts</snippit>
+      <code>cp_user_accounts:
+Run control nusrmgr.cpl
+return</code>
+    </command>
+    <command hotkey="^#F">
+      <name>Windows Firewall</name>
+      <description>Display Windows Firewall Options</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_window_firewall</label>
+      <snippit>cp_window_firewall</snippit>
+      <code>cp_window_firewall:
+Run control firewall.cpl
+return</code>
+    </command>
+    <command hotkey="^#B">
+      <name>Bluetooth Control Panel</name>
+      <description>Display Bluetooth Settings</description>
+      <category>Control_x0020_Panel</category>
+      <label>cp_bluetooth_settings</label>
+      <snippit>cp_bluetooth_settings</snippit>
+      <code>cp_bluetooth_settings:
+Run control bthprops.cpl,%A_WinDir%\system32,,
+return</code>
+    </command>
+  </commands>
+  <hotstrings />
+  <includes />
+</plugin>

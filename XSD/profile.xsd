@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" version="1.1">
+    <xs:element name="profile">
+        <xs:annotation>
+            <xs:documentation>Represents a proflie of for AHKsnipit Snippit
+                profiles</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="codeLanguage">
+                    <xs:annotation>
+                        <xs:documentation>Contains Various infomration about the Profile Name,
+                            Description, Paths and more.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="codeName" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation>The Code Name that matches the xml codeName
+                                        attribute of the hotstring, hotkey xml
+                                        files</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="description" type="xs:string" minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation>The Description of the
+                                        Profile</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="paths">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="mainData" type="FolderPath">
+                                            <xs:annotation>
+                                                <xs:documentation>The Path to the Main Plugin XML
+                                                  files for this profile. In most all cases this
+                                                  will be the same nams as the
+                                                  codeName.</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element name="plugin" type="FolderPath" minOccurs="0">
+                                            <xs:annotation>
+                                                <xs:documentation>The Path to the Plugin that are
+                                                  included in this profile. These file will most
+                                                  always if not always be .ahk files. In most all
+                                                  cases this will be the same nams as the codeName.
+                                                  Should Default to the main_data element value if
+                                                  excluded. </xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element name="snips" type="FolderPath" minOccurs="0">
+                                            <xs:annotation>
+                                                <xs:documentation>The Path to the Snipits folder for the plugin. This will be any snipits included with your plugin. The snipits will moste likely be written automatically from your Plugin xml file into this folder. In most all cases this will be the same nams as the codeName. Should Default to the main_data element value if excluded.</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element minOccurs="0" name="dataItemsPath"
+                                            type="FolderPath">
+                                            <xs:annotation>
+                                                <xs:documentation>The Path to the Data Items folder for the plugin. This will be any Data fils included with your plugin. The Data files will be written automatically from your Plugin xml file into this folder. In most all cases this will be the same nams as the codeName. Should Default to the main_data element value if excluded.</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="windows" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Contains Window elements that dertermine the Window to
+                            Apply the Profile to. If profile/globalProfle attribute is false then
+                            the window will act as a white list and include the Profile on only the
+                            matched windows. If profile/globalProfle attribute is true then the
+                            window will act as a black list and exclude the Global Profile from
+                            running on the matched windows.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="window" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation>Window Elemetn</xs:documentation>
+                                </xs:annotation>
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="name" type="xs:string">
+                                            <xs:annotation>
+                                                <xs:documentation>The Name of the window for the
+                                                  profile. The name should be a human readable
+                                                  friendly format that represent the window such as
+                                                  Sublime Text Editor.</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element name="value" type="xs:string">
+                                            <xs:annotation>
+                                                <xs:documentation>The value of the window should
+                                                  match a AutoHotkey Window Value such as ahk_class
+                                                  Notepad or ahk_exe notepad.exe. It is recommended
+                                                  to use the spy utility provided with AutoHotkey to
+                                                  get the window information you may
+                                                  need.</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element minOccurs="0" name="profileEndChars">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="profileEndChar"
+                                type="EndCharsEnum"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                    <xs:unique name="profileEndChar_unique">
+                        <xs:selector xpath="profileEndChar"/>
+                        <xs:field xpath="."/>
+                    </xs:unique>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="version" type="profileVersion" use="required">
+                <xs:annotation>
+                    <xs:documentation>The current version of the profile</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="minVersion" type="profileVersion">
+                <xs:annotation>
+                    <xs:documentation>The Mininum version AHKSnipit can be to support this
+                        profile</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>The Name of the profle. This is the name used for display
+                        purporses.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute default="false" name="globalProfile" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>If true then the profie will be treated as Global. That is the
+                        profile will apply to all windows.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="schemaVersion" type="xs:decimal" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="EndCharsEnum">
+        <xs:annotation>
+            <xs:documentation>AutoHotkey EndChars Values</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Zero"/>
+            <xs:enumeration value="One"/>
+            <xs:enumeration value="Two"/>
+            <xs:enumeration value="Three"/>
+            <xs:enumeration value="Four"/>
+            <xs:enumeration value="Five"/>
+            <xs:enumeration value="Six"/>
+            <xs:enumeration value="Seven"/>
+            <xs:enumeration value="Eight"/>
+            <xs:enumeration value="Nine"/>
+            <xs:enumeration value="Upper_A"/>
+            <xs:enumeration value="Upper_B"/>
+            <xs:enumeration value="Upper_C"/>
+            <xs:enumeration value="Upper_D"/>
+            <xs:enumeration value="Upper_E"/>
+            <xs:enumeration value="Upper_F"/>
+            <xs:enumeration value="Upper_G"/>
+            <xs:enumeration value="Upper_H"/>
+            <xs:enumeration value="Upper_I"/>
+            <xs:enumeration value="Upper_J"/>
+            <xs:enumeration value="Upper_K"/>
+            <xs:enumeration value="Upper_L"/>
+            <xs:enumeration value="Upper_M"/>
+            <xs:enumeration value="Upper_N"/>
+            <xs:enumeration value="Upper_O"/>
+            <xs:enumeration value="Upper_P"/>
+            <xs:enumeration value="Upper_Q"/>
+            <xs:enumeration value="Upper_R"/>
+            <xs:enumeration value="Upper_S"/>
+            <xs:enumeration value="Upper_T"/>
+            <xs:enumeration value="Upper_U"/>
+            <xs:enumeration value="Upper_V"/>
+            <xs:enumeration value="Upper_W"/>
+            <xs:enumeration value="Upper_X"/>
+            <xs:enumeration value="Upper_Y"/>
+            <xs:enumeration value="Upper_Z"/>
+            <xs:enumeration value="Lower_A"/>
+            <xs:enumeration value="Lower_B"/>
+            <xs:enumeration value="Lower_C"/>
+            <xs:enumeration value="Lower_D"/>
+            <xs:enumeration value="Lower_E"/>
+            <xs:enumeration value="Lower_F"/>
+            <xs:enumeration value="Lower_G"/>
+            <xs:enumeration value="Lower_H"/>
+            <xs:enumeration value="Lower_I"/>
+            <xs:enumeration value="Lower_J"/>
+            <xs:enumeration value="Lower_K"/>
+            <xs:enumeration value="Lower_L"/>
+            <xs:enumeration value="Lower_M"/>
+            <xs:enumeration value="Lower_N"/>
+            <xs:enumeration value="Lower_O"/>
+            <xs:enumeration value="Lower_P"/>
+            <xs:enumeration value="Lower_Q"/>
+            <xs:enumeration value="Lower_R"/>
+            <xs:enumeration value="Lower_S"/>
+            <xs:enumeration value="Lower_T"/>
+            <xs:enumeration value="Lower_U"/>
+            <xs:enumeration value="Lower_V"/>
+            <xs:enumeration value="Lower_W"/>
+            <xs:enumeration value="Lower_X"/>
+            <xs:enumeration value="Lower_Y"/>
+            <xs:enumeration value="Lower_Z"/>
+            <xs:enumeration value="Space"/>
+            <xs:enumeration value="Tab"/>
+            <xs:enumeration value="Enter"/>
+            <xs:enumeration value="And"/>
+            <xs:enumeration value="SingleQuote"/>
+            <xs:enumeration value="DoubleQuote"/>
+            <xs:enumeration value="Asterisk"/>
+            <xs:enumeration value="AT"/>
+            <xs:enumeration value="BackQuote"/>
+            <xs:enumeration value="BackSlash"/>
+            <xs:enumeration value="ForwardShash"/>
+            <xs:enumeration value="CurlyBraceOpen"/>
+            <xs:enumeration value="CurlyBraceClose"/>
+            <xs:enumeration value="SquareBracketOpen"/>
+            <xs:enumeration value="SqureBracketClose"/>
+            <xs:enumeration value="OpenParenthesis"/>
+            <xs:enumeration value="CloseParenthesis"/>
+            <xs:enumeration value="Carat"/>
+            <xs:enumeration value="Colon"/>
+            <xs:enumeration value="Comma"/>
+            <xs:enumeration value="Dollar"/>
+            <xs:enumeration value="Equal"/>
+            <xs:enumeration value="ExclamationMark"/>
+            <xs:enumeration value="GreaterThan"/>
+            <xs:enumeration value="LessThan"/>
+            <xs:enumeration value="Hyphen"/>
+            <xs:enumeration value="Percent"/>
+            <xs:enumeration value="Pipe"/>
+            <xs:enumeration value="Plus"/>
+            <xs:enumeration value="Pound"/>
+            <xs:enumeration value="SemiColin"/>
+            <xs:enumeration value="Tilde"/>
+            <xs:enumeration value="UnderScore"/>
+            <xs:enumeration value="QuestionMark"/>
+            <xs:enumeration value="Period"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="profileFileName">
+        <xs:annotation>
+            <xs:documentation>Limits String to between 2 and 200 chars and only safe file name chars.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^/|\\:\*\?&quot;&lt;>]{2,200}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="FolderPath">
+        <xs:annotation>
+            <xs:documentation>Limits String to between 2 and 200 chars and only safe folder namechars.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^/|\*\?&quot;&lt;>]{2,200}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="profileVersion">
+        <xs:annotation>
+            <xs:documentation>Limits string to version in format of #.# or #.#.# or
+                #.#.#.#</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

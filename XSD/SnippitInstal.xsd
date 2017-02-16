@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.1">
+    <xs:include schemaLocation="profile.xsd"/>
+    <xs:include schemaLocation="plugin.xsd"/>
+    <xs:element name="SnippitInstal">
+        <xs:annotation>
+            <xs:documentation>Represents a single Profie with one or more plugins to
+                install.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="profile"/>
+                <xs:element maxOccurs="unbounded" ref="plugin"/>
+            </xs:sequence>
+            <xs:attribute name="codeVersion" default="1.0.0.0" type="snippitInstallVersion">
+                <xs:annotation>
+                    <xs:documentation>The Version of the SnippitInstall Schema. This version information will be used by the processing probram to determine how to process the xml</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="schemaVersion" type="xs:decimal" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="snippitInstallVersion">
+        <xs:annotation>
+            <xs:documentation>Limits string to version in format of #.# or #.#.# or
+                #.#.#.#</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

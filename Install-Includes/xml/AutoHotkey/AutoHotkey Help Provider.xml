@@ -1,0 +1,1621 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0.0" profileName="AutoHotkey" name="AutoHotkey Help Provider" schemaVersion="1.1">
+  <commands>
+    <command hotkey="^F2">
+      <name>AutoHotKeyHelp</name>
+      <description>Displays Help for selected Keyworkd</description>
+      <category>Help</category>
+      <label>AutoHotKeykHelperDisplayHelp</label>
+      <snippit>AutoHotkey_Help_Provider_AutoHotKeyHelp.ahk</snippit>
+      <code>AutoHotKeykHelperDisplayHelp:
+	try
+	{
+		AutoHotKeykHelper.Instance.GetHelpClip()
+	}
+	catch e
+	{
+		HandleError(e,"Error displaying Help", e.Message)
+	}
+return</code>
+    </command>
+  </commands>
+  <hotstrings />
+  <includes>
+    <include>
+      <name>AutoHotKeykHelper Class</name>
+      <description>AutoHotKeykHelper Class for handeling help request</description>
+      <snippit>AutoHotkey_Help_Provider_AutoHotKeykHelper_Class.ahk</snippit>
+      <code>class AutoHotKeykHelper extends MfSingletonBase
+{
+;{ Fields
+	Static HlpWinTitle := "AutoHotkey Help"
+	Static HlpFileName := "AutoHotkey.chm"
+	Static ObjectIniFile := "AutoHotKeyword.ini"
+	Static AutoHotKeykHelperIniFile := "AutoHotkeyHelperData.ini"
+	Static _instance := ""
+; End:Fields ;}
+;{ Constructor
+	__New(HelpFile, IniFile="") {
+		base.__New()
+		_IniFile := ""
+		if (MfNull.IsNull(IniFile))
+		{
+			_iniFile := MfString.Format("{0}\{1}", AS_AppDatapath, AutoHotKeykHelper.ObjectIniFile)
+		}
+		else
+		{
+			_IniFile := MfString.GetValue(IniFile)
+		}
+		if (MfString.IsNullOrEmpty(_IniFile))
+		{
+			ex := new MfArgumentNullException("IniFile")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		if (MfNull.IsNull(HelpFile))
+		{
+			ex := new MfArgumentNullException("HelpFile")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		
+		
+		IfNotExist, %_IniFile%
+		{
+			ex := new MfFileNotFoundException(MfEnvironment.Instance.GetResourceString("IO.FileNotFound"), _IniFile)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		
+		_HelpFile := MfString.GetValue(HelpFile)
+		IfNotExist, %_HelpFile%
+		{
+			ex := new MfFileNotFoundException(MfEnvironment.Instance.GetResourceString("IO.FileNotFound"), _HelpFile)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		this.m_IniFile := _IniFile
+		this.m_HelpFile := _HelpFile
+		
+		this.m_Path := this._GetPath(_HelpFile)
+		
+	}
+; End:Constructor ;}
+;{ Methods
+;{ 	ClearCurrentHelpObject()
+	ClearCurrentHelpObject()
+	{
+		this.m_CurrenthelpObject := ""
+		this.m_HelClassName := "" ; set the display property
+		AutoHotKeykHelper.ShowProgress("Help Default Object has been cleared")
+	}
+; 	End:ClearCurrentHelpObject() ;}
+;{ 	DestroyInstance			Overrides MfSingletonBase
+   ; DestroyInstance() is required to be overridden from the SingletonBase base class
+   DestroyInstance() {
+       AutoHotKeykHelper._instance := "" ; Clears current instance and releases memory
+   }
+; 	End:DestroyInstance ;}
+;{ 	GetDataINIValue()
+/*
+	Method: GetDataIniValue()
+
+	GetDataIniValue()
+		Gets a value from plugin specific ini file
+	Parameters:
+		Key
+			The key to get the value from in the ini file
+	Returns:
+		Returns string var of value from ini file if found: Otherwise empty string.
+	Remarks:
+		Static method
+*/
+	GetDataIniValue(Key)
+	{
+		strIniFile := MfString.Format("{0}\{1}", AS_AppDatapath, AutoHotKeykHelper.AutoHotKeykHelperIniFile)
+		result := Mfunc.IniRead(strIniFile, "DATA", Key, "")
+		if (result = "ERROR")
+			result := ""
+		
+		return result
+	}
+; 	End:GetDataINIValue() ;}
+;{ 	GetAhkKeyWord()
+	GetAhkKeyWord(strName)
+	{
+		_strname := StrReplace(strName, "#" , "@")
+		result := Mfunc.IniRead(this.IniFile, "AUTOHOTKEY_WORDS", _strname, "")
+		if (result = "ERROR")
+			result := ""
+		return result
+	}
+; 	End:GetAhkKeyWord() ;}
+;{ 	GetAhkKeyWord()
+	GetAhkIndexWord(strName)
+	{
+		_strname := StrReplace(strName, "#" , "@")
+		result := Mfunc.IniRead(this.IniFile, "AUTOHOTKEY_INDEX", _strname, "")
+		if (result = "ERROR")
+			result := ""
+		return result
+	}
+; 	End:GetAhkKeyWord() ;}
+;{ 	GetHelp()
+/*
+	Method: GetHelp()
+
+	GetHelp()
+		GetHelp description
+	Parameters:
+		sObject
+			The Object to look up from the ini file and use to build path to help topic
+	Throws:
+		Throws MfException if
+	Remarks:
+		If GetHelp
+*/
+	GetHelp(sLookup) {
+		if (MfString.IsNullOrEmpty(sLookup))
+		{
+			ex := new MfArgumentNullException("sLookup")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		try
+		{
+			_sLookup := MfString.GetValue(sLookup)
+			oName := this.GetAhkKeyWord(_sLookup)
+			
+			if (MfString.IsNullOrEmpty(oName))
+			{
+				oName := this.GetAhkIndexWord(_sLookup)
+			}
+			if (MfString.IsNullOrEmpty(oName))
+			{
+				this.DoHelpSearch(_sLookup)
+				return
+			}
+			; return any @ symbols to hasktags
+			oName := StrReplace(oName, "@" , "#")
+			bWinOpen := this.IsHelpWinOpen()
+			if (bWinOpen)
+			{
+				sHelpUrl := this._GetOpenUrl(oName)
+			}
+			else
+			{
+				sHelpUrl := this._GetClosedUrl(oName)
+			}
+						
+			if (bWinOpen)
+			{
+				;; the folloewin two line worked in windows 10 x64 but have been replaced by the thrid line that works in win 8 x32
+				;~ For wb in ComObjCreate("Shell.Application").Windows	
+				;~ wb := AutoHotKeykHelper.WBGet("ahk_class HH Parent")
+				sWinTitle := AutoHotKeykHelper.HlpWinTitle
+				tmm := A_TitleMatchMode
+				SetTitleMatchMode, 3
+		
+				;wb := AutoHotKeykHelper.WBGet("ahk_class HH Parent")
+				wb := AutoHotKeykHelper.WBGet(AutoHotKeykHelper.HlpWinTitle)
+				wb.Navigate(sHelpUrl)
+				sWinTitle := AutoHotKeykHelper.HlpWinTitle
+				WinActivate, %sWinTitle%
+				SetTitleMatchMode , %tmm%
+			}
+			else
+			{
+				runStr := MfString.Format("hh.exe {0}{1}{0}", """", sHelpUrl)
+				Mfunc.Run(runStr)
+			}
+			
+		}
+		catch e
+		{
+			ex := new MfException(MfEnvironment.Instance.GetResourceString("Exception_Error", A_ThisFunc), e)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+
+	}
+; 	End:GetHelp() ;}
+;{ 	GetCurrentWord()
+/*
+	Method: GetCurrentWord()
+
+	GetCurrentWord()
+		Get selected text value and return it. If No Text is selected then attempt is made to slect work under cursor
+*/
+	GetCurrentWord() {
+		retval := ""
+		; CoordMode for Mouse and Caret has to be the same
+		ah_ClipSaved := ClipboardAll   ; Save the entire clipboard
+		Clipboard =  ; Clear clipboard
+		try
+		{
+			ControlGetFocus ah_Editor, A  ; Retrieve the name of the focused editor control
+			ControlGet ah_SelectedText, Selected, , %ah_Editor%, A  ; Read selected text if it supports this function
+		}
+		catch e
+		{
+			Clipboard := ""
+			ah_SelectedText := Public.GetClipboardData(false)
+			ClipWait, 0.5, 1
+		}
+		Loop Parse, Clipboard, `n, `r  ; Remove linebreaks
+		  if StrLen(ah_SelectedText) &gt; 0 then
+			ah_SearchText := A_LoopField
+		
+		if ah_SelectedText := ""
+		{  ; There is no selection, try to find the word under the caret
+		  MouseGetPos ah_MouseX, ah_MouseY  ; Save current mouse position
+		  MouseMove %A_CaretX%, %A_CaretY%, 0  ; Move mouse cursor to current caret
+		  Click 2  ; Perform doubleclick
+		  ;send , {Click 2}
+		  MouseMove ah_MouseX, ah_MouseY, 0  ; Restore previous mouse position
+		}
+		Send ^c  ; Copy selected text
+		ClipWait 0.5, 1  ; Wait for clipboard
+		if not ErrorLevel 
+			retval := Clipboard
+		Clipboard := ah_ClipSaved  ; Restore the original clipboard
+		Return retval
+	}
+; 	End:GetCurrentWord() ;}
+;{ 	GetHelpClip()
+	GetHelpClip() {
+		;clip := Public.GetClipboardData()
+		clip := this.GetCurrentWord()
+		if (MfString.IsNullOrEmpty(clip))
+		{
+			ex := new MfException("Nothing has been Selected")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		
+		return this.GetHelp(clip)
+	}
+; 	End:GetHelpClip() ;}
+;{ 	GetInstance				Overrides MfSingletonBase
+; GetInstance() is required to be overridden from the SingletonBase base class
+   GetInstance() { ; Overrides base
+   if (MfNull.IsNull(AutoHotKeykHelper._instance)) {
+		HelpLocation := AutoHotKeykHelper.GetDataIniValue("HelpLocation")
+		If (MfString.IsNullOrEmpty(HelpLocation))
+		{
+			If (AutoHotKeykHelper.SetHelpLocation())
+			{
+				HelpLocation := AutoHotKeykHelper.GetDataIniValue("HelpLocation")
+			}
+		}
+		
+		if ((MfString.IsNullOrEmpty(HelpLocation)) || (!FileExist(HelpLocation)))
+		{
+			ex := new MfException("The value location of help file is not set")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+       AutoHotKeykHelper._instance := new AutoHotKeykHelper(HelpLocation)
+   }
+   return AutoHotKeykHelper._instance
+   }
+; End:GetInstance ;}
+;{ 	GuessHelpFileLocation()
+/*
+	Method: GuessHelpFileLocation()
+
+	GuessHelpFileLocation()
+		Checks the registery for the help File Name
+	Returns:
+		Returns Help File full path name if found; Otherwise Empty string.
+	Throws:
+		Throws MfFileNotFoundException if unable to find AutoHotkey help file
+	Remarks:
+		Static Method
+*/
+	GuessHelpFileLocation() {
+		RegRead ah_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir  ; Read AutoHotkey installation directory from Registry
+		if ErrorLevel  ; Use a best guess location instead
+		  ah_dir := A_ProgramFiles "\AutoHotkey"
+		ah_help_file := ah_dir "\" . AutoHotKeykHelper.HlpFileName
+		IfNotExist %ah_help_file%  ; Check helpfile existence
+		{
+			ex := new MfFileNotFoundException("Unable to find AutoHotkey Help File", ah_help_file)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		return ah_help_file
+	}
+; 	End:GuessHelpFileLocation() ;}
+;{ 	IsHelpWinOpen()
+/*
+	Method: IsHempWinOpen()
+
+	IsHempWinOpen()
+		Gets if Mini-Framework help window is open
+	Returns:
+		Returns true if Window is found; Otherwise false
+*/
+	IsHelpWinOpen()	{
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		retval := false
+		IfWinExist, %sWinTitle%
+		{
+			retval := true
+		}
+		SetTitleMatchMode, %tmm%
+		return retval
+	}
+; 	End:IsHelpWinOpen() ;}
+;{ 	OpenOrActivateHelpFile()
+/*
+	Method: OpenOrActivateHelpFile()
+
+	OpenOrActivateHelpFile()
+		Open or Activates the help file
+	Returns:
+		Returns 
+	Throws:
+		Throws MfException if unable to open or activate file
+	Remarks:
+		If OpenOrActivateHelpFile
+*/
+	OpenOrActivateHelpFile() {
+		bWinOpen := this.IsHelpWinOpen()
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		if (bWinOpen =  false)
+		{
+			runStr := MfString.Format("hh.exe {0}{1}{0}", """", this.HelpFile)
+			Mfunc.Run(runStr)
+			
+			WinWaitActive, %sWinTitle%,, 3
+			if ErrorLevel
+			{
+				ex := new MfException("Time Out waiting for Help File to open")
+				ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+				throw ex
+			}
+			return
+		}
+		WinActivate, %sWinTitle%
+		WinWaitActive, %sWinTitle%,, 3
+		if ErrorLevel
+		{
+			ex := new MfException("Time Out waiting for Help File to open")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+	}
+; 	End:OpenOrActivateHelpFile() ;}
+;{ 	SetDataIniValue()
+/*
+	Method: SetDataIniValue()
+
+	SetDataIniValue()
+		Set a value for Plugin in Plugin Specific ini file
+	Parameters:
+		Key
+			The key of the ini
+		Value
+			The value to assign to the key
+*/
+	SetDataIniValue(Key, Value)	{
+		strIniFile := MfString.Format("{0}\{1}", AS_AppDatapath, AutoHotKeykHelper.AutoHotKeykHelperIniFile)
+		Mfunc.IniWrite(Value, strIniFile, "DATA", Key)
+		
+	}
+; 	End:SetDataIniValue() ;}
+
+;{ 	SetHelpLocation
+/*
+	Method: SetHelpLocation()
+
+	SetHelpLocation()
+		Sets the location on the Mini-Framework Helpfile into ini for quick access or custom location
+	Returns:
+		Returns true if success locating and setting help file location; Otherwise false
+	Remarks:
+		Static Method
+		Checkes the registry location for Mini-Framework version running this class and uses that help file
+		if it exist; Otherwise prompts user for location of help file.
+*/
+	SetHelpLocation() {
+		try
+		{
+			SelectedFile := AutoHotKeykHelper.GuessHelpFileLocation()
+			if (MfString.IsNullOrEmpty(SelectedFile) = false)
+			{
+				AutoHotKeykHelper.SetDataIniValue("HelpLocation", SelectedFile)
+				return true
+			}
+		}
+		catch e
+		{
+			; do nothing
+		}
+		
+		SelectedFile := Mfunc.FileSelectFile(3, , "Select AutoHotkey Help File", "Help File (*.chm)")
+		if (MfString.IsNullOrEmpty(SelectedFile))
+		{
+			return false
+		}
+		AutoHotKeykHelper.SetDataIniValue("HelpLocation", SelectedFile)
+		return true
+	}
+; 	End:SetHelpLocation ;}
+;{ 	ShowProgress()
+/*
+	Method: ShowProgress()
+
+	ShowProgress()
+		Displays a popup messag for a specific amoount of time
+	Parameters:
+		Message
+			The Message to display as a popup
+		DisplayTime
+			The amoun of time in Milliseconds to display the message
+			The default length is 1000 for 1 second.
+	Remarks:
+		If DisplayTime &gt; 30000 then it will be set at 30000 ( 30 seconds )
+*/
+	ShowProgress(Message, DisplayTime = 1000) {
+		if (MfString.IsNullOrEmpty(Message))
+		{
+			Progress, Off
+			return
+		}
+		_time := MfInteger.GetValue(DisplayTime)
+		if (_Time &lt;= 0)
+		{
+			Progress, Off
+			return
+		}
+		; make a maximum of 30 seconds display time
+		if (_time &gt; 30000)
+		{
+			_time = 30000
+		}
+		_msg := MfString.GetValue(Message)
+		Progress, Off
+		Progress, m2 b fs13 zh0 WMn700, %_msg%
+		sleep, %_time%
+		Progress, Off
+		
+	}
+; 	End:ShowProgress() ;}
+;{ 	WBGet()
+	; https://autohotkey.com/board/topic/96530-ieget-issue/
+	; https://autohotkey.com/board/topic/47052-basic-webpage-controls-with-javascript-com-tutorial/
+	WBGet(WinTitle="ahk_class IEFrame", Svr#=1) { ; based on ComObjQuery docs
+	   static   msg := DllCall("RegisterWindowMessage", "str", "WM_HTML_GETOBJECT")
+	   ,   IID := "{0002DF05-0000-0000-C000-000000000046}" ; IID_IWebBrowserApp
+	;  ,   IID := "{332C4427-26CB-11D0-B483-00C04FD90119}" ; IID_IHTMLWindow2
+	   SendMessage msg, 0, 0, Internet Explorer_Server%Svr#%, %WinTitle%
+	   if (ErrorLevel != "FAIL") {
+		  lResult:=ErrorLevel, VarSetCapacity(GUID,16,0)
+		  if DllCall("ole32\CLSIDFromString", "wstr","{332C4425-26CB-11D0-B483-00C04FD90119}", "ptr",&amp;GUID) &gt;= 0 {
+			 DllCall("oleacc\ObjectFromLresult", "ptr",lResult, "ptr",&amp;GUID, "ptr",0, "ptr*",pdoc)
+			 return ComObj(9,ComObjQuery(pdoc,IID,IID),1), ObjRelease(pdoc)
+		  }
+	   }
+	}
+	
+; 	End:WBGet() ;}
+; End:Methods ;}
+;{ 	Search methods
+;{ 		SearchHelp()
+/*
+	Method: SearchHelp()
+
+	SearchHelp()
+		Sets the help file to be ready to search
+	Returns:
+		Returns truen if the Help File was fund and the side control is activated for search
+	Throws:
+		Throws MfException if
+	Remarks:
+		Internal Method
+		If searchbar is not availalbe then a message is displayed to unhide the search bar and try again
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	SearchHelp() {
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		WinActivate, %sWinTitle%
+		
+		;WinActivate ahk_class HH Parent  ; Activate window before accessing the controls
+		
+		Sleep, 100
+		ah_SidebarVisible := ""
+		ControlGet ah_SidebarVisible, Visible, , HH Child2, %sWinTitle% ; Check sidebar visibility
+		if not ah_SidebarVisible
+		{
+		  MsgBox 64, Information, Turn on the sidebar to enable searching.
+		  Return false ; We cannot go further
+		}
+		SendMessage 0x130C, 2,, SysTabControl321, %sWinTitle%  ; 0x130C is TCM_SETCURSEL. Select the 3. 
+		SetTitleMatchMode , %tmm%
+		this.ProperClick("SysTabControl321")
+		return true
+	}
+; 		End:SearchHelp() ;}
+;{ 		ProperClick()
+/*
+	Method: ProperClick()
+
+	ProperClick()
+		Sends a Click to a control and freezes the mouse while control is taking place
+	Parameters:
+		ControlName
+			The Name of the control to send click to click
+	Remarks:
+		Internal Method
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	ProperClick(ControlName) {
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		WinActivate, %sWinTitle%
+		SetTitleMatchMode , %tmm%
+		BlockInput MouseMove  ; Disable mouse movement to prevent user interaction
+		ControlClick %ControlName%, %sWinTitle%, , , , NA  ; Perform the click (NA is required!)
+		BlockInput MouseMoveOff  ; Enable mouse movement
+	}
+; 		End:ProperClick() ;}
+;{ 		SearchFieldVisible()
+/*
+	Method: SearchFieldVisible()
+
+	SearchFieldVisible()
+		Checks to see if the Search Control is Visible
+	Returns:
+		Returns true if search control is visible; Otherwise false.
+	Remarks:
+		Internal Method
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	SearchFieldVisible() {
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		WinActivate, %sWinTitle%
+		ControlGet ah_SearchVisible, Visible, , Edit1,  %sWinTitle%  ; Check Edit1 control visibility
+		SetTitleMatchMode , %tmm%
+		Return ah_SearchVisible
+	}
+; 		End:SearchFieldVisible() ;}
+;{ 		DoHelpSearch()
+/*
+	Method: DoHelpSearch()
+
+	DoHelpSearch()
+		Searches the helpfile for SearchValue if passed in; Otherwise search from selected text
+	Parameters:
+		SearchValue
+			If SearchValue is not null then it is the text that is searched for.
+			Otherwise selected texted from editor is searched
+	Remarks:
+		Public Method
+		Will open helpfile if closed.
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	DoHelpSearch(SearchValue ="") {
+		If (MfString.IsNullOrEmpty(SearchValue))
+		{
+			SearchValue :=  this.GetCurrentWord()
+		}
+		;MsgBox , Search Word, %SearchValue%
+		this.OpenOrActivateHelpFile()
+		if (this.SearchHelp() = false)
+		{
+			MsgBox 16, Error, Invalid search field.
+			return
+		}
+		if not this.SearchFieldVisible()
+		{  ; The script should never go here, however it could happen in a future version of HTML Help Viewer
+		  MsgBox 16, Error, Invalid search field.
+		  Return
+		}
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		;ControlSetText Edit1, %SearchValue%, ahk_class HH Parent  ; Set the search field text
+		ControlSetText Edit1, %SearchValue%, %sWinTitle%  ; Set the search field text
+		ControlFocus Edit1
+		SetTitleMatchMode , %tmm%
+		this.SendSearchEnter()
+	}
+; 		End:DoHelpSearch() ;}
+;{ 		SendSearchEnter()
+/*
+	Method: SendSearchEnter()
+
+	SendSearchEnter()
+		Focus tabpage for search and clicks the search button
+	Remarks:
+		Internal Method
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	SendSearchEnter() {
+		sWinTitle := AutoHotKeykHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		ControlGetFocus ah_FocusedControl, %sWinTitle%
+		SetTitleMatchMode , %tmm%
+		
+		SendMessage 0x130B,,, SysTabControl321  ; 0x130B = TCM_GETCURSEL. Which tabpage is selected? Answer is ErrorLevel
+		if (ErrorLevel = 2 and ah_FocusedControl = "Edit1")  ; Is search field focused?
+		{
+		  this.ProperClick("Button2")  ; Start searching
+		  Sleep 100  ; Waiting to finish searching
+		  Loop 3
+			IfWinActive ahk_class #32770  ; Is it still searching?
+			  Sleep 100
+		  IfWinActive ahk_class #32770  ; Error dialog
+			WinClose  ; Close dialog, it is an error
+		  else
+			this.ProperClick("Button3")  ; Show first page in the list    
+		}
+		else
+		  Send {Enter}  ; Just send Enter if we are not searching
+	}
+; 		End:SendSearchEnter() ;}
+; 	End:Search methods ;}
+;{ Internal Methods
+;{ 	_CleanString()
+	_CleanString(str) {
+		RegExMatch(str, "i)([a-z]+)", result) 
+		return result
+	}
+; 	End:_CleanString() ;}
+;{ 	_GetOpenUrl()
+	_GetOpenUrl(sTopic) {
+		sHelpUrl := MfString.Format("mk:@MSITStore:{0}::/{1}", this.HelpFile , sTopic)
+		return sHelpUrl
+	}
+; 	End:_GetOpenUrl() ;}
+;{ 	_GetClosedUrl()
+	_GetClosedUrl(sTopic) {
+		sHelpUrl := MfString.Format("{0}::/{1}", this.HelpFile, sTopic)
+		return sHelpUrl
+	}
+; 	End:_GetClosedUrl() ;}
+;{ 	_GetPath()
+/*
+	Method: _GetPath()
+
+	_GetPath()
+		Gets the Path section of a file path
+	Returns:
+		Returns the path section of file path
+	Throws:
+		Throws MfException if unable to get path section
+*/
+	_GetPath(FilePath) {
+		sPath := ""
+		try
+		{
+			iLast := MfString.LastIndexOf(FilePath, "\")
+			sPath := MfString.Substring(FilePath, 0, iLast)
+		}
+		catch e
+		{
+			ex := new MfException(MfString.Format("Unable to get path from '{0}'", FilePath))
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		return sPath
+	}
+; 	End:_GetPath() ;}
+; End:Internal Methods ;}
+;{ Properties
+
+;{ HelpFile
+	m_HelpFile := Null
+/*!
+	Property: HelpFile [get/set]
+		Gets or sets the HelpFile value associated with the this instance
+	Value:
+		Var representing the HelpFile property of the instance
+*/
+	HelpFile[]
+	{
+		get {
+			return this.m_HelpFile
+		}
+		set {
+			this.m_HelpFile := value
+			return this.m_HelpFile
+		}
+	}
+; End:HelpFile ;}
+	;{ IniFile
+	m_IniFile := ""
+/*!
+	Property: IniFile [get/set]
+		Gets or sets the IniFile value associated with the this instance
+	Value:
+		Var representing the IniFile property of the instance
+*/
+	IniFile[]
+	{
+		get {
+			return this.m_IniFile
+		}
+		set {
+			this.m_IniFile := MfString.GetValue(value)
+			return this.m_IniFile
+		}
+	}
+; End:IniFile ;}
+;{ Path
+	m_Path := ""
+/*!
+	Property: Path [get]
+		Gets the Path value associated with the this instance
+	Value:
+		Var representing the Path property of the instance
+	Remarks:
+		Readonly Property
+*/
+	Path[]
+	{
+		get {
+			return this.m_Path
+		}
+		set {
+			ex := new MfNotSupportedException(MfEnvironment.Instance.GetResourceString("NotSupportedException_Readonly_Property"))
+			ex.SetProp(A_LineFile, A_LineNumber, "Path")
+			Throw ex
+		}
+	}
+; End:Path ;}
+;{ ShowProgres
+	m_ShowProgres := true
+	/*!
+		Property: ShowProgres [get/set]
+			Gets or sets the ShowProgres value associated with the this instance
+		Value:
+			Var representing the ShowProgres property of the instance
+	*/
+	ShowProgres[]
+	{
+		get {
+			return this.m_ShowProgres
+		}
+		set {
+			this.m_ShowProgres := MfBool.GetValue(value)
+			return this.m_ShowProgres
+		}
+	}
+; End:ShowProgres ;}
+; End:Properties ;}
+}</code>
+      <hotstrings />
+      <commands />
+    </include>
+  </includes>
+  <dataItems>
+    <dataItem overwrite="true">
+      <name>AutoHotKeyword</name>
+      <dataFileName>AutoHotKeyword.ini</dataFileName>
+      <dataValue>[AUTOHOTKEY_WORDS]
+Hotkeys = docs/Hotkeys.htm
+Scripts = docs/Scripts.htm
+Functions = docs/Functions.htm
+Objects = docs/Objects.htm
+Implementation = docs/Objects.htm@Implementation
+Object = docs/objects/Object.htm
+ClipWait = docs/commands/ClipWait.htm
+EnvGet = docs/commands/EnvGet.htm
+EnvSet = docs/commands/EnvSet.htm
+EnvUpdate = docs/commands/EnvUpdate.htm
+OnClipboardChange = docs/commands/OnClipboardChange.htm
+SysGet = docs/commands/SysGet.htm
+DllCall = docs/commands/DllCall.htm
+NumGet = docs/commands/NumGet.htm
+NumPut = docs/commands/NumPut.htm
+RegisterCallback = docs/commands/RegisterCallback.htm
+VarSetCapacity = docs/commands/VarSetCapacity.htm
+ComObjActive = docs/commands/ComObjActive.htm
+ComObjArray = docs/commands/ComObjArray.htm
+ComObjConnect = docs/commands/ComObjConnect.htm
+ComObjCreate = docs/commands/ComObjCreate.htm
+ComObjGet = docs/commands/ComObjGet.htm
+ComObjError = docs/commands/ComObjError.htm
+ComObjFlags = docs/commands/ComObjFlags.htm
+ComObjQuery = docs/commands/ComObjQuery.htm
+ComObjType = docs/commands/ComObjType.htm
+ComObjValue = docs/commands/ComObjValue.htm
+Drive = docs/commands/Drive.htm
+DriveGet = docs/commands/DriveGet.htm
+DriveSpaceFree = docs/commands/DriveSpaceFree.htm
+FileAppend = docs/commands/FileAppend.htm
+FileCopy = docs/commands/FileCopy.htm
+FileCopyDir = docs/commands/FileCopyDir.htm
+FileCreateDir = docs/commands/FileCreateDir.htm
+FileCreateShortcut = docs/commands/FileCreateShortcut.htm
+FileDelete = docs/commands/FileDelete.htm
+FileEncoding = docs/commands/FileEncoding.htm
+FileGetAttrib = docs/commands/FileGetAttrib.htm
+FileGetShortcut = docs/commands/FileGetShortcut.htm
+FileGetSize = docs/commands/FileGetSize.htm
+FileGetTime = docs/commands/FileGetTime.htm
+FileGetVersion = docs/commands/FileGetVersion.htm
+FileInstall = docs/commands/FileInstall.htm
+FileMove = docs/commands/FileMove.htm
+FileMoveDir = docs/commands/FileMoveDir.htm
+FileOpen = docs/commands/FileOpen.htm
+FileReadLine = docs/commands/FileReadLine.htm
+FileRead = docs/commands/FileRead.htm
+FileRecycle = docs/commands/FileRecycle.htm
+FileRecycleEmpty = docs/commands/FileRecycleEmpty.htm
+FileRemoveDir = docs/commands/FileRemoveDir.htm
+FileSelectFile = docs/commands/FileSelectFile.htm
+FileSelectFolder = docs/commands/FileSelectFolder.htm
+FileSetAttrib = docs/commands/FileSetAttrib.htm
+FileSetTime = docs/commands/FileSetTime.htm
+IniDelete = docs/commands/IniDelete.htm
+IniRead = docs/commands/IniRead.htm
+IniWrite = docs/commands/IniWrite.htm
+SetWorkingDir = docs/commands/SetWorkingDir.htm
+SplitPath = docs/commands/SplitPath.htm
+Break = docs/commands/Break.htm
+Catch = docs/commands/Catch.htm
+Continue = docs/commands/Continue.htm
+Critical = docs/commands/Critical.htm
+Else = docs/commands/Else.htm
+Exit = docs/commands/Exit.htm
+ExitApp = docs/commands/ExitApp.htm
+Finally = docs/commands/Finally.htm
+Gosub = docs/commands/Gosub.htm
+Goto = docs/commands/Goto.htm
+If = docs/commands/IfExpression.htm
+IfMsgBox = docs/commands/IfMsgBox.htm
+Loop = docs/commands/Loop.htm
+Loop = docs/commands/Loop.htm
+OnExit = docs/commands/OnExit.htm
+Pause = docs/commands/Pause.htm
+Reload = docs/commands/Reload.htm
+Return = docs/commands/Return.htm
+SetBatchLines = docs/commands/SetBatchLines.htm
+SetTimer = docs/commands/SetTimer.htm
+Sleep = docs/commands/Sleep.htm
+Suspend = docs/commands/Suspend.htm
+Thread = docs/commands/Thread.htm
+Throw = docs/commands/Throw.htm
+Try = docs/commands/Try.htm
+Until = docs/commands/Until.htm
+FileSelectFile = docs/commands/FileSelectFile.htm
+FileSelectFolder = docs/commands/FileSelectFolder.htm
+Gui = docs/commands/Gui.htm
+GuiControl = docs/commands/GuiControl.htm
+GuiControlGet = docs/commands/GuiControlGet.htm
+IfMsgBox = docs/commands/IfMsgBox.htm
+InputBox = docs/commands/InputBox.htm
+Menu = docs/commands/Menu.htm
+MsgBox = docs/commands/MsgBox.htm
+OnMessage = docs/commands/OnMessage.htm
+Progress = docs/commands/Progress.htm
+SplashImage = docs/commands/Progress.htm
+ToolTip = docs/commands/ToolTip.htm
+TrayTip = docs/commands/TrayTip.htm
+Maths = docs/commands/Math.htm
+Abs = docs/commands/Math.htm@Abs
+Ceil = docs/commands/Math.htm@Ceil
+Exp = docs/commands/Math.htm@Exp
+Floor = docs/commands/Math.htm@Floor
+Log = docs/commands/Math.htm@Log
+Ln = docs/commands/Math.htm@Ln
+Mod = docs/commands/Math.htm@Mod
+Random = docs/commands/Random.htm
+Round = docs/commands/Math.htm@Round
+SetFormat = docs/commands/SetFormat.htm
+Sqrt = docs/commands/Math.htm@Sqrt
+Transform = docs/commands/Transform.htm
+@HotkeyInterval = docs/commands/_HotkeyInterval.htm
+@HotkeyModifierTimeout = docs/commands/_HotkeyModifierTimeout.htm
+@Hotstring = docs/commands/_Hotstring.htm
+@If = docs/commands/_If.htm
+@IfTimeOut = docs/commands/_IfTimeout.htm
+@InputLevel = docs/commands/_InputLevel.htm
+@MaxHotkeysPerInterval = docs/commands/_MaxHotkeysPerInterval.htm
+@MaxThreads = docs/commands/_MaxThreads.htm
+@MaxThreadsBuffer = docs/commands/_MaxThreadsBuffer.htm
+@MaxThreadsPerHotkey = docs/commands/_MaxThreadsPerHotkey.htm
+@MenuMaskKey = docs/commands/_MenuMaskKey.htm
+@UseHook = docs/commands/_UseHook.htm
+Hotkey = docs/commands/Hotkey.htm
+ListHotkeys = docs/commands/ListHotkeys.htm
+Suspend = docs/commands/Suspend.htm
+@InstallKeybdHook = docs/commands/_InstallKeybdHook.htm
+@InstallMouseHook = docs/commands/_InstallMouseHook.htm
+@KeyHistory = docs/commands/_KeyHistory.htm
+BlockInput = docs/commands/BlockInput.htm
+Click = docs/commands/Click.htm
+ControlClick = docs/commands/ControlClick.htm
+CoordMode = docs/commands/CoordMode.htm
+GetKeyState = docs/commands/GetKeyState.htm
+KeyHistory = docs/commands/KeyHistory.htm
+KeyWait = docs/commands/KeyWait.htm
+Input = docs/commands/Input.htm
+MouseClick = docs/commands/MouseClick.htm
+MouseClickDrag = docs/commands/MouseClickDrag.htm
+MouseGetPos = docs/commands/MouseGetPos.htm
+MouseMove = docs/commands/MouseMove.htm
+SendLevel = docs/commands/SendLevel.htm
+SendMode = docs/commands/SendMode.htm
+SetDefaultMouseSpeed = docs/commands/SetDefaultMouseSpeed.htm
+SetKeyDelay = docs/commands/SetKeyDelay.htm
+SetMouseDelay = docs/commands/SetMouseDelay.htm
+SetNumScrollCapsLockState = docs/commands/SetNumScrollCapsLockState.htm
+SetStoreCapslockMode = docs/commands/SetStoreCapslockMode.htm
+AutoTrim = docs/commands/AutoTrim.htm
+Edit = docs/commands/Edit.htm
+Func = docs/commands/Func.htm
+IsByRef = docs/commands/IsByRef.htm
+IsFunc = docs/commands/IsFunc.htm
+IsLabel = docs/commands/IsLabel.htm
+IsObject = docs/commands/IsObject.htm
+ListLines = docs/commands/ListLines.htm
+ListVars = docs/commands/ListVars.htm
+OutputDebug = docs/commands/OutputDebug.htm
+Transform = docs/commands/Transform.htm
+URLDownloadToFile = docs/commands/URLDownloadToFile.htm
+VarSetCapacity = docs/commands/VarSetCapacity.htm
+Process = docs/commands/Process.htm
+RunAs = docs/commands/RunAs.htm
+Shutdown = docs/commands/Shutdown.htm
+RegDelete = docs/commands/RegDelete.htm
+RegRead = docs/commands/RegRead.htm
+RegWrite = docs/commands/RegWrite.htm
+SetRegView = docs/commands/SetRegView.htm
+ImageSearch = docs/commands/ImageSearch.htm
+PixelGetColor = docs/commands/PixelGetColor.htm
+PixelSearch = docs/commands/PixelSearch.htm
+SoundBeep = docs/commands/SoundBeep.htm
+SoundGet = docs/commands/SoundGet.htm
+SoundGetWaveVolume = docs/commands/SoundGetWaveVolume.htm
+SoundPlay = docs/commands/SoundPlay.htm
+SoundSet = docs/commands/SoundSet.htm
+SoundSetWaveVolume = docs/commands/SoundSetWaveVolume.htm
+Asc = docs/commands/Asc.htm
+Chr = docs/commands/Chr.htm
+Format = docs/commands/Format.htm
+FormatTime = docs/commands/FormatTime.htm
+InStr = docs/commands/InStr.htm
+Ord = docs/commands/Ord.htm
+RegExMatch = docs/commands/RegExMatch.htm
+RegExReplace = docs/commands/RegExReplace.htm
+SetFormat = docs/commands/SetFormat.htm
+Sort = docs/commands/Sort.htm
+StringCaseSense = docs/commands/StringCaseSense.htm
+StringGetPos = docs/commands/StringGetPos.htm
+StringLen = docs/commands/StringLen.htm
+StringMid = docs/commands/StringMid.htm
+StringReplace = docs/commands/StringReplace.htm
+StringSplit = docs/commands/StringSplit.htm
+StrLen = docs/commands/StringLen.htm
+StrReplace = docs/commands/StringReplace.htm
+StrSplit = docs/commands/StringSplit.htm
+SubStr = docs/commands/SubStr.htm
+Trim = docs/commands/Trim.htm
+Control = docs/commands/Control.htm
+ControlClick = docs/commands/ControlClick.htm
+ControlFocus = docs/commands/ControlFocus.htm
+ControlGet = docs/commands/ControlGet.htm
+ControlGetFocus = docs/commands/ControlGetFocus.htm
+ControlGetPos = docs/commands/ControlGetPos.htm
+ControlGetText = docs/commands/ControlGetText.htm
+ControlMove = docs/commands/ControlMove.htm
+ControlSetText = docs/commands/ControlSetText.htm
+Menu = docs/commands/Menu.htm
+SetControlDelay = docs/commands/SetControlDelay.htm
+WinMenuSelectItem = docs/commands/WinMenuSelectItem.htm
+GroupActivate = docs/commands/GroupActivate.htm
+GroupAdd = docs/commands/GroupAdd.htm
+GroupClose = docs/commands/GroupClose.htm
+GroupDeactivate = docs/commands/GroupDeactivate.htm
+@WinActivateForce = docs/commands/_WinActivateForce.htm
+DetectHiddenText = docs/commands/DetectHiddenText.htm
+DetectHiddenWindows = docs/commands/DetectHiddenWindows.htm
+SetTitleMatchMode = docs/commands/SetTitleMatchMode.htm
+SetWinDelay = docs/commands/SetWinDelay.htm
+StatusBarGetText = docs/commands/StatusBarGetText.htm
+StatusBarWait = docs/commands/StatusBarWait.htm
+WinActivate = docs/commands/WinActivate.htm
+WinActivateBottom = docs/commands/WinActivateBottom.htm
+WinActive = docs/commands/WinActive.htm
+WinClose = docs/commands/WinClose.htm
+WinExist = docs/commands/WinExist.htm
+WinGet = docs/commands/WinGet.htm
+WinGetActiveStats = docs/commands/WinGetActiveStats.htm
+WinGetActiveTitle = docs/commands/WinGetActiveTitle.htm
+WinGetClass = docs/commands/WinGetClass.htm
+WinGetPos = docs/commands/WinGetPos.htm
+WinGetText = docs/commands/WinGetText.htm
+WinGetTitle = docs/commands/WinGetTitle.htm
+WinHide = docs/commands/WinHide.htm
+WinKill = docs/commands/WinKill.htm
+WinMaximize = docs/commands/WinMaximize.htm
+WinMinimize = docs/commands/WinMinimize.htm
+WinMove = docs/commands/WinMove.htm
+WinRestore = docs/commands/WinRestore.htm
+WinSet = docs/commands/WinSet.htm
+WinSetTitle = docs/commands/WinSetTitle.htm
+WinShow = docs/commands/WinShow.htm
+WinWait = docs/commands/WinWait.htm
+WinWaitClose = docs/commands/WinWaitClose.htm
+@AllowSameLineComments = docs/commands/_AllowSameLineComments.htm
+@ClipboardTimeout = docs/commands/_ClipboardTimeout.htm
+@CommentFlag = docs/commands/_CommentFlag.htm
+@ErrorStdOut = docs/commands/_ErrorStdOut.htm
+@EscapeChar = docs/commands/_EscapeChar.htm
+@HotkeyInterval = docs/commands/_HotkeyInterval.htm
+@HotkeyModifierTimeout = docs/commands/_HotkeyModifierTimeout.htm
+@Hotstring = docs/commands/_Hotstring.htm
+@If = docs/commands/_If.htm
+@IfTimeout = docs/commands/_IfTimeout.htm
+@InputLevel = docs/commands/_InputLevel.htm
+@InstallKeybdHook = docs/commands/_InstallKeybdHook.htm
+@InstallMouseHook = docs/commands/_InstallMouseHook.htm
+@KeyHistory = docs/commands/_KeyHistory.htm
+@MaxHotkeysPerInterval = docs/commands/_MaxHotkeysPerInterval.htm
+@MaxMem = docs/commands/_MaxMem.htm
+@MaxThreads = docs/commands/_MaxThreads.htm
+@MaxThreadsBuffer = docs/commands/_MaxThreadsBuffer.htm
+@MaxThreadsPerHotkey = docs/commands/_MaxThreadsPerHotkey.htm
+@MenuMaskKey = docs/commands/_MenuMaskKey.htm
+@NoEnv = docs/commands/_NoEnv.htm
+@NoTrayIcon = docs/commands/_NoTrayIcon.htm
+@Persistent = docs/commands/_Persistent.htm
+@SingleInstance = docs/commands/_SingleInstance.htm
+@UseHook = docs/commands/_UseHook.htm
+@Warn = docs/commands/_Warn.htm
+@WinActivateForce = docs/commands/_WinActivateForce.htm
+StrPut = docs/commands/StrPutGet.htm
+StrGet = docs/commands/StrPutGet.htm
+IfExist = docs/commands/IfExist.htm
+IfNotExist = docs/commands/IfExist.htm
+@Include = docs/commands/_Include.htm
+@IncludeAgain = docs/commands/_Include.htm
+IfExist = docs/commands/IfExist.htm
+IfNotExist = docs/commands/IfExist.htm
+IfInString = docs/commands/IfInString.htm
+IfNotInString = docs/commands/IfInString.htm
+IfWinActive = docs/commands/WinActive.htm
+IfWinNotActive = docs/commands/WinActive.htm
+IfWinExist = docs/commands/WinExist.htm
+IfWinNotExist = docs/commands/WinExist.htm
+SplashTextOn = docs/commands/SplashTextOn.htm
+SplashTextOff = docs/commands/SplashTextOn.htm
+@IfWinActive = docs/commands/_IfWinActive.htm
+Exist = docs/commands/_IfWinActive.htm
+Run = docs/commands/Run.htm
+RunWait = docs/commands/Run.htm
+IfInString = docs/commands/IfInString.htm
+IfNotInString = docs/commands/IfInString.htm
+StringLeft = docs/commands/StringLeft.htm
+StringRight = docs/commands/StringLeft.htm
+StringLower = docs/commands/StringLower.htm
+StringUpper = docs/commands/StringLower.htm
+StringTrimLeft = docs/commands/StringTrimLeft.htm
+StringTrimRight = docs/commands/StringTrimLeft.htm
+StrPut = docs/commands/StrPutGet.htm
+StrGet = docs/commands/StrPutGet.htm
+ControlSend = docs/commands/ControlSend.htm
+ControlSendRaw = docs/commands/ControlSend.htm
+PostMessage = docs/commands/PostMessage.htm
+SendMessage = docs/commands/PostMessage.htm
+IfWinActive = docs/commands/WinActive.htm
+IfWinNotActive = docs/commands/WinActive.htm
+IfWinExist = docs/commands/WinExist.htm
+IfWinNotExist = docs/commands/WinExist.htm
+@IfWinActive = docs/commands/_IfWinActive.htm
+Exist = docs/commands/_IfWinActive.htm
+@Include = docs/commands/_Include.htm
+@IncludeAgain = docs/commands/_Include.htm
+ControlSend = docs/commands/ControlSend.htm
+ControlSendRaw = docs/commands/ControlSend.htm
+Send = docs/commands/Send.htm
+SendRaw = docs/commands/Send.htm
+SendInput = docs/commands/Send.htm
+SendPlay = docs/commands/Send.htm
+SendEvent = docs/commands/Send.htm
+WinMinimizeAll = docs/commands/WinMinimizeAll.htm
+WinMinimizeAllUndo = docs/commands/WinMinimizeAll.htm
+WinWaitActive = docs/commands/WinWaitActive.htm
+WinWaitNotActive = docs/commands/WinWaitActive.htm
+
+[AUTOHOTKEY_INDEX]
+@AllowSameLineComments = docs/commands/_AllowSameLineComments.htm
+@ClipboardTimeout = docs/commands/_ClipboardTimeout.htm
+@CommentFlag = docs/commands/_CommentFlag.htm
+@Delimiter = docs/commands/_EscapeChar.htm@Delimiter
+@DerefChar = docs/commands/_EscapeChar.htm@DerefChar
+@ErrorStdOut = docs/commands/_ErrorStdOut.htm
+@EscapeChar = docs/commands/_EscapeChar.htm
+@HotkeyInterval = docs/commands/_HotkeyInterval.htm
+@HotkeyModifierTimeout = docs/commands/_HotkeyModifierTimeout.htm
+@Hotstring = docs/commands/_Hotstring.htm
+@If = docs/commands/_If.htm
+@IfTimeout = docs/commands/_IfTimeout.htm
+@IfWinActive = docs/commands/_IfWinActive.htm
+@IfWinExist = docs/commands/_IfWinActive.htm
+@IfWinNotActive = docs/commands/_IfWinActive.htm
+@IfWinNotExist = docs/commands/_IfWinActive.htm
+@Include = docs/commands/_Include.htm
+@IncludeAgain = docs/commands/_Include.htm
+@InputLevel = docs/commands/_InputLevel.htm
+@InstallKeybdHook = docs/commands/_InstallKeybdHook.htm
+@InstallMouseHook = docs/commands/_InstallMouseHook.htm
+@KeyHistory = docs/commands/_KeyHistory.htm
+@LTrim = docs/Scripts.htm@LTrim
+@MaxHotkeysPerInterval = docs/commands/_MaxHotkeysPerInterval.htm
+@MaxMem = docs/commands/_MaxMem.htm
+@MaxThreads = docs/commands/_MaxThreads.htm
+@MaxThreadsBuffer = docs/commands/_MaxThreadsBuffer.htm
+@MaxThreadsPerHotkey = docs/commands/_MaxThreadsPerHotkey.htm
+@MenuMaskKey = docs/commands/_MenuMaskKey.htm
+@NoEnv = docs/commands/_NoEnv.htm
+@NoTrayIcon = docs/commands/_NoTrayIcon.htm
+@Persistent = docs/commands/_Persistent.htm
+@SingleInstance = docs/commands/_SingleInstance.htm
+@UseHook = docs/commands/_UseHook.htm
+@Warn = docs/commands/_Warn.htm
+@WinActivateForce = docs/commands/_WinActivateForce.htm
+A_AhkPath = docs/Variables.htm@AhkPath
+A_AhkVersion = docs/Variables.htm@AhkVersion
+A_AppData = docs/Variables.htm@AppData
+A_AppDataCommon = docs/Variables.htm@AppDataCommon
+A_AutoTrim = docs/Variables.htm@AutoTrim
+A_BatchLines = docs/Variables.htm@BatchLines
+A_CaretX = docs/Variables.htm@Caret
+A_CaretY = docs/Variables.htm@Caret
+A_ComputerName = docs/Variables.htm@ComputerName
+A_ControlDelay = docs/Variables.htm@ControlDelay
+A_Cursor = docs/Variables.htm@Cursor
+A_DD = docs/Variables.htm@DD
+A_DDD = docs/Variables.htm@DDDD
+A_DDDD = docs/Variables.htm@DDDD
+A_DefaultGui = docs/Variables.htm@DefaultGui
+A_DefaultListView = docs/Variables.htm@DefaultListView
+A_DefaultMouseSpeed = docs/Variables.htm@DefaultMouseSpeed
+A_DefaultTreeView = docs/Variables.htm@DefaultTreeView
+A_Desktop = docs/Variables.htm@Desktop
+A_DesktopCommon = docs/Variables.htm@DesktopCommon
+A_DetectHiddenText = docs/Variables.htm@DetectHiddenText
+A_DetectHiddenWindows = docs/Variables.htm@DetectHiddenWindows
+A_EndChar = docs/Variables.htm@EndChar
+A_EventInfo = docs/Variables.htm@EventInfo
+A_ExitReason = docs/Variables.htm@ExitReason
+A_FileEncoding = docs/Variables.htm@FileEncoding
+A_FormatFloat = docs/Variables.htm@FormatFloat
+A_FormatInteger = docs/Variables.htm@FormatInteger
+A_Gui = docs/Variables.htm@Gui
+A_GuiControl = docs/Variables.htm@GuiControl
+A_GuiControlEvent = docs/Variables.htm@GuiControlEvent
+A_GuiEvent = docs/Variables.htm@GuiEvent
+A_GuiHeight = docs/Variables.htm@GuiWidth
+A_GuiWidth = docs/Variables.htm@GuiWidth
+A_GuiX = docs/Variables.htm@GuiX
+A_GuiY = docs/Variables.htm@GuiY
+A_Hour = docs/Variables.htm@Hour
+A_IconFile = docs/Variables.htm@IconFile
+A_IconHidden = docs/Variables.htm@IconHidden
+A_IconNumber = docs/Variables.htm@IconNumber
+A_IconTip = docs/Variables.htm@IconTip
+A_Index = docs/commands/Loop.htm
+A_Is64bitOS = docs/Variables.htm@Is64bitOS
+A_IsAdmin = docs/Variables.htm@IsAdmin
+A_IsCompiled = docs/Variables.htm@IsCompiled
+A_IsCritical = docs/Variables.htm@IsCritical
+A_IsPaused = docs/Variables.htm@IsPaused
+A_IsSuspended = docs/Variables.htm@IsSuspended
+A_IsUnicode = docs/Variables.htm@IsUnicode
+A_KeyDelay = docs/Variables.htm@KeyDelay
+A_KeyDelayPlay = docs/Variables.htm@KeyDelayPlay
+A_KeyDuration = docs/Variables.htm@KeyDelay
+A_KeyDurationPlay = docs/Variables.htm@KeyDelayPlay
+A_Language = docs/Variables.htm@Language
+A_LastError = docs/Variables.htm@LastError
+A_LineFile = docs/Variables.htm@LineFile
+A_LineNumber = docs/Variables.htm@LineNumber
+A_LoopField = docs/commands/LoopParse.htm@LoopField
+A_LoopFileAttrib = docs/commands/LoopFile.htm@LoopFileAttrib
+A_LoopFileDir = docs/commands/LoopFile.htm@LoopFileDir
+A_LoopFileExt = docs/commands/LoopFile.htm@LoopFileExt
+A_LoopFileFullPath = docs/commands/LoopFile.htm@LoopFileFullPath
+A_LoopFileLongPath = docs/commands/LoopFile.htm@LoopFileLongPath
+A_LoopFileName = docs/commands/LoopFile.htm@LoopFileName
+A_LoopFileShortName = docs/commands/LoopFile.htm@LoopFileShortName
+A_LoopFileShortPath = docs/commands/LoopFile.htm@LoopFileShortPath
+A_LoopFileSize = docs/commands/LoopFile.htm@LoopFileSize
+A_LoopFileSizeKB = docs/commands/LoopFile.htm@LoopFileSizeKB
+A_LoopFileSizeMB = docs/commands/LoopFile.htm@LoopFileSizeMB
+A_LoopFileTimeAccessed = docs/commands/LoopFile.htm@LoopFileTimeAccessed
+A_LoopFileTimeCreated = docs/commands/LoopFile.htm@LoopFileTimeCreated
+A_LoopFileTimeModified = docs/commands/LoopFile.htm@LoopFileTimeModified
+A_LoopReadLine = docs/commands/LoopReadFile.htm@LoopReadLine
+A_LoopRegKey = docs/commands/LoopReg.htm@vars
+A_LoopRegName = docs/commands/LoopReg.htm@vars
+A_LoopRegSubKey = docs/commands/LoopReg.htm@vars
+A_LoopRegTimeModified = docs/commands/LoopReg.htm@vars
+A_LoopRegType = docs/commands/LoopReg.htm@vars
+A_MDay = docs/Variables.htm@DD
+A_Min = docs/Variables.htm@Min
+A_MM = docs/Variables.htm@MM
+A_MMM = docs/Variables.htm@MMM
+A_MMMM = docs/Variables.htm@MMMM
+A_Mon = docs/Variables.htm@MM
+A_MouseDelay = docs/Variables.htm@MouseDelay
+A_MouseDelayPlay = docs/Variables.htm@MouseDelay
+A_MSec = docs/Variables.htm@MSec
+A_MyDocuments = docs/Variables.htm@MyDocuments
+A_Now = docs/Variables.htm@Now
+A_NowUTC = docs/Variables.htm@NowUTC
+A_NumBatchLines = docs/Variables.htm@BatchLines
+A_OSType = docs/Variables.htm@OSType
+A_OSVersion = docs/Variables.htm@OSVersion
+A_PriorHotkey = docs/Variables.htm@PriorHotkey
+A_PriorKey = docs/Variables.htm@PriorKey
+A_ProgramFiles = docs/Variables.htm@ProgramFiles
+A_Programs = docs/Variables.htm@Programs
+A_ProgramsCommon = docs/Variables.htm@ProgramsCommon
+A_PtrSize = docs/Variables.htm@PtrSize
+A_RegView = docs/Variables.htm@RegView
+A_ScreenDPI = docs/Variables.htm@ScreenDPI
+A_ScreenHeight = docs/Variables.htm@Screen
+A_ScreenWidth = docs/Variables.htm@Screen
+A_ScriptDir = docs/Variables.htm@ScriptDir
+A_ScriptFullPath = docs/Variables.htm@ScriptFullPath
+A_ScriptHwnd = docs/Variables.htm@ScriptHwnd
+A_ScriptName = docs/Variables.htm@ScriptName
+A_Sec = docs/Variables.htm@Sec
+A_SendLevel = docs/Variables.htm@SendLevel
+A_SendMode = docs/Variables.htm@SendMode
+A_Space = docs/Variables.htm@Space
+A_StartMenu = docs/Variables.htm@StartMenu
+A_StartMenuCommon = docs/Variables.htm@StartMenuCommon
+A_Startup = docs/Variables.htm@Startup
+A_StartupCommon = docs/Variables.htm@StartupCommon
+A_StoreCapslockMode = docs/Variables.htm@StoreCapslockMode
+A_StringCaseSense = docs/Variables.htm@StringCaseSense
+A_Tab = docs/Variables.htm@Tab
+A_Temp = docs/Variables.htm@Temp
+A_ThisFunc = docs/Variables.htm@ThisFunc
+A_ThisHotkey = docs/Variables.htm@ThisHotkey
+A_ThisLabel = docs/Variables.htm@ThisLabel
+A_ThisMenu = docs/Variables.htm@ThisMenu
+A_ThisMenuItem = docs/Variables.htm@ThisMenuItem
+A_ThisMenuItemPos = docs/Variables.htm@ThisMenuItemPos
+A_TickCount = docs/Variables.htm@TickCount
+A_TimeIdle = docs/Variables.htm@TimeIdle
+A_TimeIdlePhysical = docs/Variables.htm@TimeIdlePhysical
+A_TimeSincePriorHotkey = docs/Variables.htm@TimeSincePriorHotkey
+A_TimeSinceThisHotkey = docs/Variables.htm@TimeSinceThisHotkey
+A_TitleMatchMode = docs/Variables.htm@TitleMatchMode
+A_TitleMatchModeSpeed = docs/Variables.htm@TitleMatchModeSpeed
+A_UserName = docs/Variables.htm@UserName
+A_WDay = docs/Variables.htm@WDay
+A_WinDelay = docs/Variables.htm@WinDelay
+A_WinDir = docs/Variables.htm@WinDir
+A_WorkingDir = docs/Variables.htm@WorkingDir
+A_YDay = docs/Variables.htm@YDay
+A_Year = docs/Variables.htm@YYYY
+A_YWeek = docs/Variables.htm@YWeek
+A_YYYY = docs/Variables.htm@YYYY
+Acknowledgements = docs/misc/Acknowledgements.htm
+add = docs/commands/EnvAdd.htm
+ahk2exe = docs/Scripts.htm@ahk2exe
+ahk_class = docs/misc/WinTitle.htm@ahk_class
+ahk_exe = docs/misc/WinTitle.htm@ahk_exe
+ahk_group = docs/misc/WinTitle.htm@ahk_group
+ahk_id = docs/misc/WinTitle.htm@ahk_id
+ahk_pid = docs/misc/WinTitle.htm@ahk_pid
+AllowSameLineComments = docs/commands/_AllowSameLineComments.htm
+alnum = docs/commands/IfIs.htm
+alpha = docs/commands/IfIs.htm
+AltGr = docs/Hotkeys.htm@AltGr
+AltTab = docs/Hotkeys.htm@alttab
+Arrays = docs/misc/Arrays.htm
+AutoTrim = docs/commands/AutoTrim.htm
+BlockInput = docs/commands/BlockInput.htm
+Break = docs/commands/Break.htm
+buffering = docs/commands/_MaxThreadsBuffer.htm
+ByRef = docs/Functions.htm@ByRef
+callbacks = docs/commands/RegisterCallback.htm
+Catch = docs/commands/Catch.htm
+Changelog = docs/AHKL_ChangeLog.htm
+Clipboard = docs/misc/Clipboard.htm
+ClipboardAll = docs/misc/Clipboard.htm@ClipboardAll
+ClipWait = docs/commands/ClipWait.htm
+COM = docs/commands/ComObjCreate.htm
+CommentFlag = docs/commands/_CommentFlag.htm
+Compatibility = docs/Compat.htm
+ComSpec = docs/Variables.htm@ComSpec
+Continue = docs/commands/Continue.htm
+Control = docs/commands/Control.htm
+ControlClick = docs/commands/ControlClick.htm
+ControlFocus = docs/commands/ControlFocus.htm
+ControlGet = docs/commands/ControlGet.htm
+ControlGetFocus = docs/commands/ControlGetFocus.htm
+ControlGetPos = docs/commands/ControlGetPos.htm
+ControlGetText = docs/commands/ControlGetText.htm
+ControlMove = docs/commands/ControlMove.htm
+ControlSend = docs/commands/ControlSend.htm
+ControlSendRaw = docs/commands/ControlSend.htm
+ControlSetText = docs/commands/ControlSetText.htm
+coordinates = docs/commands/CoordMode.htm
+CoordMode = docs/commands/CoordMode.htm
+Critical = docs/commands/Critical.htm
+debugger = docs/commands/OutputDebug.htm
+Delimiter = docs/commands/_EscapeChar.htm
+DerefChar = docs/commands/_EscapeChar.htm
+DetectHiddenText = docs/commands/DetectHiddenText.htm
+DetectHiddenWindows = docs/commands/DetectHiddenWindows.htm
+digit = docs/commands/IfIs.htm
+Drive = docs/commands/Drive.htm
+DriveGet = docs/commands/DriveGet.htm
+DriveSpaceFree = docs/commands/DriveSpaceFree.htm
+Edit = docs/commands/Edit.htm
+Else = docs/commands/Else.htm
+EnvAdd = docs/commands/EnvAdd.htm
+EnvDiv = docs/commands/EnvDiv.htm
+EnvGet = docs/commands/EnvGet.htm
+EnvMult = docs/commands/EnvMult.htm
+EnvSet = docs/commands/EnvSet.htm
+EnvSub = docs/commands/EnvSub.htm
+EnvUpdate = docs/commands/EnvUpdate.htm
+ErrorLevel = docs/misc/ErrorLevel.htm
+ErrorStdOut = docs/commands/_ErrorStdOut.htm
+EscapeChar = docs/commands/_EscapeChar.htm
+Exit = docs/commands/Exit.htm
+ExitApp = docs/commands/ExitApp.htm
+expressions = docs/Variables.htm@Expressions
+False = docs/Variables.htm@Boolean
+FileAppend = docs/commands/FileAppend.htm
+FileCopy = docs/commands/FileCopy.htm
+FileCopyDir = docs/commands/FileCopyDir.htm
+FileCreateDir = docs/commands/FileCreateDir.htm
+FileCreateShortcut = docs/commands/FileCreateShortcut.htm
+FileDelete = docs/commands/FileDelete.htm
+FileEncoding = docs/commands/FileEncoding.htm
+FileGetAttrib = docs/commands/FileGetAttrib.htm
+FileGetShortcut = docs/commands/FileGetShortcut.htm
+FileGetSize = docs/commands/FileGetSize.htm
+FileGetTime = docs/commands/FileGetTime.htm
+FileGetVersion = docs/commands/FileGetVersion.htm
+FileInstall = docs/commands/FileInstall.htm
+FileMove = docs/commands/FileMove.htm
+FileMoveDir = docs/commands/FileMoveDir.htm
+FileOpen = docs/commands/FileOpen.htm
+FileRead = docs/commands/FileRead.htm
+FileReadLine = docs/commands/FileReadLine.htm
+FileRecycle = docs/commands/FileRecycle.htm
+FileRecycleEmpty = docs/commands/FileRecycleEmpty.htm
+FileRemoveDir = docs/commands/FileRemoveDir.htm
+FileSelectFile = docs/commands/FileSelectFile.htm
+FileSelectFolder = docs/commands/FileSelectFolder.htm
+FileSetAttrib = docs/commands/FileSetAttrib.htm
+FileSetTime = docs/commands/FileSetTime.htm
+Finally = docs/commands/Finally.htm
+focus = docs/commands/ControlFocus.htm
+Fonts = docs/misc/FontsStandard.htm
+FormatTime = docs/commands/FormatTime.htm
+GetKeyState = docs/commands/GetKeyState.htm
+Gosub = docs/commands/Gosub.htm
+Goto = docs/commands/Goto.htm
+GroupActivate = docs/commands/GroupActivate.htm
+GroupAdd = docs/commands/GroupAdd.htm
+GroupClose = docs/commands/GroupClose.htm
+GroupDeactivate = docs/commands/GroupDeactivate.htm
+Gui = docs/commands/Gui.htm
+GuiControl = docs/commands/GuiControl.htm
+GuiControlGet = docs/commands/GuiControlGet.htm
+HKEY_CLASSES_ROOT = docs/commands/RegRead.htm
+HKEY_CURRENT_CONFIG = docs/commands/RegRead.htm
+HKEY_CURRENT_USER = docs/commands/RegRead.htm
+HKEY_LOCAL_MACHINE = docs/commands/RegRead.htm
+HKEY_USERS = docs/commands/RegRead.htm
+hook = docs/commands/_InstallKeybdHook.htm
+Hotkey = docs/Hotkeys.htm
+HotkeyInterval = docs/commands/_HotkeyInterval.htm
+HotkeyModifierTimeout = docs/commands/_HotkeyModifierTimeout.htm
+If = docs/commands/IfEqual.htm
+IfEqual = docs/commands/IfEqual.htm
+IfExist = docs/commands/IfExist.htm
+IfGreater = docs/commands/IfEqual.htm
+IfGreaterOrEqual = docs/commands/IfEqual.htm
+IfInString = docs/commands/IfInString.htm
+IfLess = docs/commands/IfEqual.htm
+IfLessOrEqual = docs/commands/IfEqual.htm
+IfMsgBox = docs/commands/IfMsgBox.htm
+IfNotEqual = docs/commands/IfEqual.htm
+IfNotExist = docs/commands/IfExist.htm
+IfNotInString = docs/commands/IfInString.htm
+IfWinActive = docs/commands/WinActive.htm
+IfWinExist = docs/commands/WinExist.htm
+IfWinNotActive = docs/commands/WinActive.htm
+IfWinNotExist = docs/commands/WinExist.htm
+ImageSearch = docs/commands/ImageSearch.htm
+Include = docs/commands/_Include.htm
+IniDelete = docs/commands/IniDelete.htm
+IniRead = docs/commands/IniRead.htm
+IniWrite = docs/commands/IniWrite.htm
+Input = docs/commands/Input.htm
+InputBox = docs/commands/InputBox.htm
+Install = docs/commands/FileInstall.htm
+InstallKeybdHook = docs/commands/_InstallKeybdHook.htm
+InstallMouseHook = docs/commands/_InstallMouseHook.htm
+Interrupt = docs/commands/Thread.htm
+Joystick = docs/KeyList.htm@Joystick
+KeyHistory = docs/commands/KeyHistory.htm
+KeyWait = docs/commands/KeyWait.htm
+labels = docs/misc/Labels.htm
+license = docs/license.htm
+ListHotkeys = docs/commands/ListHotkeys.htm
+ListLines = docs/commands/ListLines.htm
+ListVars = docs/commands/ListVars.htm
+LoadPicture = docs/commands/LoadPicture.htm
+Locale = docs/commands/StringCaseSense.htm@Locale
+logoff = docs/commands/Shutdown.htm
+Loop = docs/commands/Loop.htm
+lParam = docs/commands/PostMessage.htm
+macro = docs/misc/Macros.htm
+MaxHotkeysPerInterval = docs/commands/_MaxHotkeysPerInterval.htm
+MaxThreads = docs/commands/_MaxThreads.htm
+MaxThreadsBuffer = docs/commands/_MaxThreadsBuffer.htm
+MaxThreadsPerHotkey = docs/commands/_MaxThreadsPerHotkey.htm
+Menu = docs/commands/Menu.htm
+MenuGetHandle = docs/commands/MenuGetHandle.htm
+MenuGetName = docs/commands/MenuGetName.htm
+MouseClick = docs/commands/MouseClick.htm
+MouseClickDrag = docs/commands/MouseClickDrag.htm
+MouseGetPos = docs/commands/MouseGetPos.htm
+MouseMove = docs/commands/MouseMove.htm
+MsgBox = docs/commands/MsgBox.htm
+multiply = docs/commands/EnvMult.htm
+NoTimers = docs/commands/Thread.htm
+NoTrayIcon = docs/commands/_NoTrayIcon.htm
+number = docs/commands/IfIs.htm
+NumGet = docs/commands/NumGet.htm
+NumPut = docs/commands/NumPut.htm
+OnClipboardChange = docs/commands/OnClipboardChange.htm
+OnExit = docs/commands/OnExit.htm
+OutputDebug = docs/commands/OutputDebug.htm
+Pause = docs/commands/Pause.htm
+PixelGetColor = docs/commands/PixelGetColor.htm
+PixelSearch = docs/commands/PixelSearch.htm
+PostMessage = docs/commands/PostMessage.htm
+Process = docs/commands/Process.htm
+ProgramFiles = docs/Variables.htm@ProgramFiles
+Progress = docs/commands/Progress.htm
+Random = docs/commands/Random.htm
+READONLY = docs/commands/FileGetAttrib.htm
+reboot = docs/commands/Shutdown.htm
+REG_BINARY = docs/commands/RegRead.htm
+REG_DWORD = docs/commands/RegRead.htm
+REG_EXPAND_SZ = docs/commands/RegRead.htm
+REG_MULTI_SZ = docs/commands/RegRead.htm
+REG_SZ = docs/commands/RegRead.htm
+RegDelete = docs/commands/RegDelete.htm
+RegRead = docs/commands/RegRead.htm
+RegWrite = docs/commands/RegWrite.htm
+Reload = docs/commands/Reload.htm
+Return = docs/commands/Return.htm
+Run = docs/commands/Run.htm
+RunAs = docs/commands/RunAs.htm
+RunWait = docs/commands/Run.htm
+Scripts = docs/Scripts.htm
+Send = docs/commands/Send.htm
+SendEvent = docs/commands/Send.htm@SendEvent
+SendInput = docs/commands/Send.htm@SendInputDetail
+SendLevel = docs/commands/SendLevel.htm
+SendMessage = docs/commands/PostMessage.htm
+SendMode = docs/commands/SendMode.htm
+SendPlay = docs/commands/Send.htm@SendPlayDetail
+SendRaw = docs/commands/Send.htm
+SetBatchLines = docs/commands/SetBatchLines.htm
+SetCapsLockState = docs/commands/SetNumScrollCapsLockState.htm
+SetControlDelay = docs/commands/SetControlDelay.htm
+SetDefaultMouseSpeed = docs/commands/SetDefaultMouseSpeed.htm
+SetEnv = docs/commands/SetEnv.htm
+SetFormat = docs/commands/SetFormat.htm
+SetKeyDelay = docs/commands/SetKeyDelay.htm
+SetMouseDelay = docs/commands/SetMouseDelay.htm
+SetNumLockState = docs/commands/SetNumScrollCapsLockState.htm
+SetRegView = docs/commands/SetRegView.htm
+SetScrollLockState = docs/commands/SetNumScrollCapsLockState.htm
+SetStoreCapslockMode = docs/commands/SetStoreCapslockMode.htm
+SetTimer = docs/commands/SetTimer.htm
+SetTitleMatchMode = docs/commands/SetTitleMatchMode.htm
+SetWinDelay = docs/commands/SetWinDelay.htm
+SetWorkingDir = docs/commands/SetWorkingDir.htm
+Shutdown = docs/commands/Shutdown.htm
+SingleInstance = docs/commands/_SingleInstance.htm
+Sleep = docs/commands/Sleep.htm
+Sort = docs/commands/Sort.htm
+SoundBeep = docs/commands/SoundBeep.htm
+SoundGet = docs/commands/SoundGet.htm
+SoundGetWaveVolume = docs/commands/SoundGetWaveVolume.htm
+SoundPlay = docs/commands/SoundPlay.htm
+SoundSet = docs/commands/SoundSet.htm
+SoundSetWaveVolume = docs/commands/SoundSetWaveVolume.htm
+space = docs/commands/IfIs.htm
+SplashImage = docs/commands/Progress.htm
+SplashTextOff = docs/commands/SplashTextOn.htm
+SplashTextOn = docs/commands/SplashTextOn.htm
+SplitPath = docs/commands/SplitPath.htm
+StatusBarGetText = docs/commands/StatusBarGetText.htm
+StatusBarWait = docs/commands/StatusBarWait.htm
+StringCaseSense = docs/commands/StringCaseSense.htm
+StringGetPos = docs/commands/StringGetPos.htm
+StringLeft = docs/commands/StringLeft.htm
+StringLen = docs/commands/StringLen.htm
+StringLower = docs/commands/StringLower.htm
+StringMid = docs/commands/StringMid.htm
+StringReplace = docs/commands/StringReplace.htm
+StringRight = docs/commands/StringLeft.htm
+StringSplit = docs/commands/StringSplit.htm
+StringTrimLeft = docs/commands/StringTrimLeft.htm
+StringTrimRight = docs/commands/StringTrimLeft.htm
+StringUpper = docs/commands/StringLower.htm
+subtract = docs/commands/EnvSub.htm
+Suspend = docs/commands/Suspend.htm
+SysGet = docs/commands/SysGet.htm
+Thread = docs/commands/Thread.htm
+threads = docs/misc/Threads.htm
+Throw = docs/commands/Throw.htm
+time = docs/commands/IfIs.htm
+ToolTip = docs/commands/ToolTip.htm
+Transform = docs/commands/Transform.htm
+TrayTip = docs/commands/TrayTip.htm
+Trim = docs/commands/AutoTrim.htm
+True = docs/Variables.htm@Boolean
+Try = docs/commands/Try.htm
+Tutorial = docs/Tutorial.htm
+Until = docs/commands/Until.htm
+URLDownloadToFile = docs/commands/URLDownloadToFile.htm
+UseHook = docs/commands/_UseHook.htm
+variables = docs/Variables.htm
+whitespace = docs/commands/AutoTrim.htm
+WinActivate = docs/commands/WinActivate.htm
+WinActivateBottom = docs/commands/WinActivateBottom.htm
+WinActivateForce = docs/commands/_WinActivateForce.htm
+WinClose = docs/commands/WinClose.htm
+WinGet = docs/commands/WinGet.htm
+WinGetActiveStats = docs/commands/WinGetActiveStats.htm
+WinGetActiveTitle = docs/commands/WinGetActiveTitle.htm
+WinGetClass = docs/commands/WinGetClass.htm
+WinGetPos = docs/commands/WinGetPos.htm
+WinGetText = docs/commands/WinGetText.htm
+WinGetTitle = docs/commands/WinGetTitle.htm
+WinHide = docs/commands/WinHide.htm
+WinKill = docs/commands/WinKill.htm
+WinMaximize = docs/commands/WinMaximize.htm
+WinMenuSelectItem = docs/commands/WinMenuSelectItem.htm
+WinMinimize = docs/commands/WinMinimize.htm
+WinMinimizeAll = docs/commands/WinMinimizeAll.htm
+WinMinimizeAllUndo = docs/commands/WinMinimizeAll.htm
+WinMove = docs/commands/WinMove.htm
+WinRestore = docs/commands/WinRestore.htm
+WinSet = docs/commands/WinSet.htm
+WinSetTitle = docs/commands/WinSetTitle.htm
+WinShow = docs/commands/WinShow.htm
+WinTitle = docs/misc/WinTitle.htm
+WinWait = docs/commands/WinWait.htm
+WinWaitActive = docs/commands/WinWaitActive.htm
+WinWaitClose = docs/commands/WinWaitClose.htm
+WinWaitNotActive = docs/commands/WinWaitActive.htm
+WM_COPYDATA = docs/commands/OnMessage.htm@SendString
+wParam = docs/commands/PostMessage.htm
+XButton = docs/commands/Click.htm
+YYYYMMDDHH24MISS = docs/commands/FileSetTime.htm@YYYYMMDD</dataValue>
+    </dataItem>
+  </dataItems>
+</plugin>

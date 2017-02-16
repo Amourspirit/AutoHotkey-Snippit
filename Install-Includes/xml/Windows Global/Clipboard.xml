@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" profileName="Windows Global" name="Clipboard" schemaVersion="1.1">
+  <commands />
+  <hotstrings>
+    <hotstring trigger="]i">
+      <name>Send Clipboard</name>
+      <description></description>
+      <category>None</category>
+      <forceclear>false</forceclear>
+      <code>Send, %Clipboard%
+return</code>
+    </hotstring>
+  </hotstrings>
+  <includes />
+</plugin>

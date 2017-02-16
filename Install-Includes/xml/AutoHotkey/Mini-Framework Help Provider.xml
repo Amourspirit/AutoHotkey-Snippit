@@ -1,0 +1,1301 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.3.7.0" profileName="AutoHotkey" name="Mini-Framework Help Provider" schemaVersion="1.1">
+  <commands>
+    <command hotkey="^!F1 &amp; T">
+      <name>Display Current Set Main Topic</name>
+      <description>Displays the Current Set Main Topic</description>
+      <category>Help</category>
+      <label>MiniFrameworkDisplaySetTopicMain</label>
+      <snippit>Mini-Framework_Help_Provider_Display_Current_Set_Main_Topic.ahk</snippit>
+      <code>MiniFrameworkDisplaySetTopicMain:
+if (MfString.IsNullOrEmpty(MiniFrameworkHelper.Instance.HelClassName))
+{
+	msg := MfString.Format("NO TOPIC Set", MiniFrameworkHelper.Instance.HelClassName )
+	MiniFrameworkHelper.ShowProgress(msg, 1800)
+	msg := ""
+}
+Else
+{
+	msg := MfString.Format("The current main topic is '{0}'", MiniFrameworkHelper.Instance.HelClassName )
+	MiniFrameworkHelper.ShowProgress(msg, 1800)
+	msg := ""
+}
+return</code>
+    </command>
+    <command hotkey="^!F1 &amp; S">
+      <name>Set Main Help Topic</name>
+      <description>Set Main Help topic.
+By Setting the Main Help topic ot a class you can then
+search for help on all the fields, properties and method of that class wihil Main help topic is set.
+For example is Main Hleptop is set to MfString thne getting help for CompareTo would automaticall search for help on 
+MfString.CompareTo() method.</description>
+      <category>Help</category>
+      <label>MiniFrameworkSetTopicMain</label>
+      <snippit>Mini-Framework_Help_Provider_Set_Main_Help_Topic.ahk</snippit>
+      <code>MiniFrameworkSetTopicMain:
+	try
+	{
+		MiniFrameworkHelper.Instance.SetCurrentHelpObject()
+	}
+	catch e
+	{
+		HandleError(e,"Error Setting Defaul Help Topic", e.Message)
+	}
+return</code>
+    </command>
+    <command hotkey="^F1">
+      <name>Show Help for Selected Object</name>
+      <description>Show help for selected object</description>
+      <category>Help</category>
+      <label>MiniFrameworkDisplayHelp</label>
+      <snippit>Mini-Framework_Help_Provider_Show_Help_for_Selected_Object.ahk</snippit>
+      <code>MiniFrameworkDisplayHelp:
+	try
+	{
+		MiniFrameworkHelper.Instance.GetHelpClip()
+	}
+	catch e
+	{
+		HandleError(e,"Error displaying Help", e.Message)
+	}
+return</code>
+    </command>
+    <command hotkey="^!F1 &amp; C">
+      <name>Clear Main Help Topic</name>
+      <description>Clear the Main Help Topic</description>
+      <category>Help</category>
+      <label>MiniFrameworkClearTopicMain</label>
+      <snippit>Mini-Framework_Help_Provider_Clear_Main_Help_Topic.ahk</snippit>
+      <code>MiniFrameworkClearTopicMain:
+	try
+	{
+		MiniFrameworkHelper.Instance.ClearCurrentHelpObject()
+	}
+	catch e
+	{
+		HandleError(e,"Error displaying Help", e.Message)
+	}
+return</code>
+    </command>
+  </commands>
+  <hotstrings />
+  <includes>
+    <include>
+      <name>MiniFrameworkHelper Class File</name>
+      <description>MiniFrameworkHelper Class</description>
+      <snippit>Mini-Framework_Help_Provider_MiniFrameworkHelper_Class_File.ahk</snippit>
+      <code>class NothingSelectedExcetpion extends MfException
+{
+}
+
+class MiniFrameworkHelper extends MfSingletonBase
+{
+;{ Fields
+	Static HlpWinTitle := "Mini-Framework Help"
+	Static HlpFileName := "Mini-Framework.chm"
+	Static ObjectIniFile := "Mini-FrameworkHelpObjectMap.ini"
+	Static MiniFrameworkHelperIniFile := "MiniFrameworkHelperData.ini"
+	Static _instance := ""
+; End:Fields ;}
+;{ Constructor
+	__New(HelpFile, IniFile="")
+	{
+		base.__New()
+		_IniFile := ""
+		if (MfNull.IsNull(IniFile))
+		{
+			_iniFile := MfString.Format("{0}\{1}", AS_AppDatapath, MiniFrameworkHelper.ObjectIniFile)
+		}
+		else
+		{
+			_IniFile := MfString.GetValue(IniFile)
+		}
+		if (MfString.IsNullOrEmpty(_IniFile))
+		{
+			ex := new MfArgumentNullException("IniFile")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		if (MfNull.IsNull(HelpFile))
+		{
+			ex := new MfArgumentNullException("HelpFile")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		
+		
+		IfNotExist, %_IniFile%
+		{
+			ex := new MfFileNotFoundException(MfEnvironment.Instance.GetResourceString("IO.FileNotFound"), _IniFile)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		
+		_HelpFile := MfString.GetValue(HelpFile)
+		IfNotExist, %_HelpFile%
+		{
+			ex := new MfFileNotFoundException(MfEnvironment.Instance.GetResourceString("IO.FileNotFound"), _HelpFile)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		this.m_IniFile := _IniFile
+		this.m_HelpFile := _HelpFile
+		
+		this.m_Path := this._GetPath(_HelpFile)
+		
+	}
+; End:Constructor ;}
+;{ Methods
+;{ 	ClearCurrentHelpObject()
+	ClearCurrentHelpObject()
+	{
+		this.m_CurrenthelpObject := ""
+		this.m_HelClassName := "" ; set the display property
+		MiniFrameworkHelper.ShowProgress("Help Default Object has been cleared")
+	}
+; 	End:ClearCurrentHelpObject() ;}
+;{ 	DestroyInstance			Overrides MfSingletonBase
+   ; DestroyInstance() is required to be overridden from the SingletonBase base class
+   DestroyInstance() {
+       MiniFrameworkHelper._instance := "" ; Clears current instance and releases memory
+   }
+; 	End:DestroyInstance ;}
+;{ 	GetDataINIValue()
+/*
+	Method: GetDataIniValue()
+
+	GetDataIniValue()
+		Gets a value from plugin specific ini file
+	Parameters:
+		Key
+			The key to get the value from in the ini file
+	Returns:
+		Returns string var of value from ini file if found: Otherwise empty string.
+	Remarks:
+		Static method
+*/
+	GetDataIniValue(Key)
+	{
+		strIniFile := MfString.Format("{0}\{1}", AS_AppDatapath, MiniFrameworkHelper.MiniFrameworkHelperIniFile)
+		result := Mfunc.IniRead(strIniFile, "DATA", Key, "")
+		if (result = "ERROR")
+			result := ""
+		
+		return result
+	}
+; 	End:GetDataINIValue() ;}
+;{ 	GetClassHelpName()
+	GetClassHelpName(strName)
+	{
+		result := Mfunc.IniRead(this.IniFile, "CLASS", strName, "")
+		if (result = "ERROR")
+			result := ""
+		return result
+	}
+; 	End:GetClassHelpName() ;}
+;{ 	GetHelp()
+/*
+	Method: GetHelp()
+
+	GetHelp()
+		GetHelp description
+	Parameters:
+		sObject
+			The Object to look up from the ini file and use to build path to help topic
+	Throws:
+		Throws MfException if
+	Remarks:
+		If GetHelp
+*/
+	GetHelp(sLookup) {
+		if (MfString.IsNullOrEmpty(sLookup))
+		{
+			ex := new MfArgumentNullException("sLookup")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		try
+		{
+			_sLookup := MfString.GetValue(sLookup)
+			iDot := MfString.IndexOf(_sLookup, ".")
+			if (iDot &gt; 0)
+			{
+				oName := this._GetDotName(_sLookup)
+			}
+			else
+			{
+				oName := this.GetClassHelpName(_sLookup)
+				if ((MfString.IsNullOrEmpty(oName)) &amp;&amp; (!MfString.IsNullOrEmpty(this.CurrenthelpObject)))
+				{
+					oName := this.CurrenthelpObject . _sLookup
+				}
+				if (MfString.IsNullOrEmpty(oName))
+				{
+					oName := this.GetMfKnowMethodHelpName(_sLookup)
+				}
+				if (MfString.IsNullOrEmpty(oName))
+				{
+					oName := this.GetMfKnowPropertyHelpName(_sLookup)
+				}
+				if (MfString.IsNullOrEmpty(oName))
+				{
+					oName := this.GetMfNameHelpName(_sLookup)
+				}
+				if (MfString.IsNullOrEmpty(oName))
+				{
+					this.DoHelpSearch(_sLookup)
+					return
+				}
+				
+			}
+			
+			bWinOpen := this.IsHelpWinOpen()
+			if (bWinOpen)
+			{
+				sHelpUrl := this._GetOpenUrl(oName)
+			}
+			else
+			{
+				sHelpUrl := this._GetClosedUrl(oName)
+			}
+						
+			if (bWinOpen)
+			{
+				;; the folloewin two line worked in windows 10 x64 but have been replaced by the thrid line that works in win 8 x32
+				;~ For wb in ComObjCreate("Shell.Application").Windows	
+				;~ wb := MiniFrameworkHelper.WBGet("ahk_class HH Parent")
+				sWinTitle := MiniFrameworkHelper.HlpWinTitle
+				tmm := A_TitleMatchMode
+				SetTitleMatchMode, 3
+				;wb := MiniFrameworkHelper.WBGet("ahk_class HH Parent")
+				wb := MiniFrameworkHelper.WBGet(sWinTitle)
+				wb.Navigate(sHelpUrl)
+				WinActivate, %sWinTitle%
+				SetTitleMatchMode , %tmm%
+			}
+			else
+			{
+				runStr := MfString.Format("hh.exe {0}{1}{0}", """", sHelpUrl)
+				Mfunc.Run(runStr)
+			}
+			
+		}
+		catch e
+		{
+			ex := new MfException(MfEnvironment.Instance.GetResourceString("Exception_Error", A_ThisFunc), e)
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+
+	}
+; 	End:GetHelp() ;}
+;{ 	GetCurrentWord()
+/*
+	Method: GetCurrentWord()()
+
+	GetCurrentWord()()
+		Get selected text value and return it. If No Text is selected then attempt is made to slect work under cursor
+	Parameters:
+		Param1
+	Returns:
+		Returns 
+	Throws:
+		Throws MfException if
+	Remarks:
+		If GetCurrentWord()
+*/
+	GetCurrentWord() {
+		retval := ""
+		; CoordMode for Mouse and Caret has to be the same
+		ah_ClipSaved := ClipboardAll   ; Save the entire clipboard
+		Clipboard =  ; Clear clipboard
+		try
+		{
+			ControlGetFocus ah_Editor, A  ; Retrieve the name of the focused editor control
+			ControlGet ah_SelectedText, Selected, , %ah_Editor%, A  ; Read selected text if it supports this function
+		}
+		catch e
+		{
+			Clipboard := ""
+			ah_SelectedText := Public.GetClipboardData(false)
+			ClipWait, 0.5, 1
+		}
+		Loop Parse, Clipboard, `n, `r  ; Remove linebreaks
+		  if StrLen(ah_SelectedText) &gt; 0 then
+			ah_SearchText := A_LoopField
+		
+		if ah_SelectedText := ""
+		{  ; There is no selection, try to find the word under the caret
+		  MouseGetPos ah_MouseX, ah_MouseY  ; Save current mouse position
+		  MouseMove %A_CaretX%, %A_CaretY%, 0  ; Move mouse cursor to current caret
+		  Click 2  ; Perform doubleclick
+		  ;send , {Click 2}
+		  MouseMove ah_MouseX, ah_MouseY, 0  ; Restore previous mouse position
+		}
+		Send ^c  ; Copy selected text
+		ClipWait 0.5, 1  ; Wait for clipboard
+		if not ErrorLevel 
+			retval := Clipboard
+		Clipboard := ah_ClipSaved  ; Restore the original clipboard
+		Return retval
+	}
+; 	End:GetCurrentWord() ;}
+;{ 	GetHelpClip()
+	GetHelpClip() {
+		;clip := Public.GetClipboardData()
+		clip := this.GetCurrentWord()
+		if (MfString.IsNullOrEmpty(clip))
+		{
+			ex := new NothingSelectedExcetpion("Nothing has been Selected")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		
+		return this.GetHelp(clip)
+	}
+; 	End:GetHelpClip() ;}
+;{ 	GetInstance				Overrides MfSingletonBase
+; GetInstance() is required to be overridden from the SingletonBase base class
+   GetInstance() { ; Overrides base
+   if (MfNull.IsNull(MiniFrameworkHelper._instance)) {
+		HelpLocation := MiniFrameworkHelper.GetDataIniValue("HelpLocation")
+		If (MfString.IsNullOrEmpty(HelpLocation))
+		{
+			If (MiniFrameworkHelper.SetHelperMiniFrameworkHelpLocation())
+			{
+				HelpLocation := MiniFrameworkHelper.GetDataIniValue("HelpLocation")
+			}
+		}
+		
+		if ((MfString.IsNullOrEmpty(HelpLocation)) || (!FileExist(HelpLocation)))
+		{
+			ex := new MfException("The value location of help file is not set")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+       MiniFrameworkHelper._instance := new MiniFrameworkHelper(HelpLocation)
+   }
+   return MiniFrameworkHelper._instance
+   }
+; End:GetInstance ;}
+;{ 	GetMfKnowMethodHelpName()
+	GetMfKnowMethodHelpName(strName) {
+		result := Mfunc.IniRead(this.m_IniFile, "KNOW_METHODS", strName, "")
+		if (result = "ERROR")
+			result := ""
+		return result
+	}
+; 	End:GetMfKnowMethodHelpName() ;}
+;{ 	GetMfKnowPropertyHelpName()
+	GetMfKnowPropertyHelpName(strName) {
+		result := Mfunc.IniRead(this.m_IniFile, "KNON_PROPERTIES", strName, "")
+		if (result = "ERROR")
+			result := ""
+		return result
+	}
+; 	End:GetMfKnowPropertyHelpName() ;}
+;{ 	GetMfNameHelpName()
+	GetMfNameHelpName(strName) {
+		result := Mfunc.IniRead(this.m_IniFile, "MFUNC_METHODS", strName, "")
+		if (result = "ERROR")
+			result := ""
+		return result
+	}
+; 	End:GetMfNameHelpName() ;}
+;{ 	GuessHelpFileLocation()
+/*
+	Method: GuessHelpFileLocation()
+
+	GuessHelpFileLocation()
+		Checks the registery for the help File Name
+	Returns:
+		Returns Help File full path name if found; Otherwise Empty string.
+	Throws:
+		Throws MfException on any error
+	Remarks:
+		Static Method
+*/
+	GuessHelpFileLocation() {
+		result := MfInfo.GetHelpFileLocation()
+		return result
+	}
+; 	End:GuessHelpFileLocation() ;}
+;{ 	IsHelpWinOpen()
+/*
+	Method: IsHempWinOpen()
+
+	IsHempWinOpen()
+		Gets if Mini-Framework help window is open
+	Returns:
+		Returns true if Window is found; Otherwise false
+*/
+	IsHelpWinOpen()	{
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		retval := false
+		IfWinExist, %sWinTitle%
+		{
+			retval := true
+		}
+		SetTitleMatchMode, %tmm%
+		return retval
+	}
+; 	End:IsHelpWinOpen() ;}
+;{ 	OpenOrActivateHelpFile()
+/*
+	Method: OpenOrActivateHelpFile()
+
+	OpenOrActivateHelpFile()
+		Open or Activates the help file
+	Returns:
+		Returns 
+	Throws:
+		Throws MfException if unable to open or activate file
+	Remarks:
+		If OpenOrActivateHelpFile
+*/
+	OpenOrActivateHelpFile() {
+		bWinOpen := this.IsHelpWinOpen()
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		if (bWinOpen =  false)
+		{
+			runStr := MfString.Format("hh.exe {0}{1}{0}", """", this.HelpFile)
+			Mfunc.Run(runStr)
+			
+			WinWaitActive, %sWinTitle%,, 3
+			if ErrorLevel
+			{
+				ex := new MfException("Time Out waiting for Help File to open")
+				ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+				throw ex
+			}
+			return
+		}
+		WinActivate, %sWinTitle%
+		WinWaitActive, %sWinTitle%,, 3
+		if ErrorLevel
+		{
+			ex := new MfException("Time Out waiting for Help File to open")
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+	}
+; 	End:OpenOrActivateHelpFile() ;}
+;{ 	SetDataIniValue()
+/*
+	Method: SetDataIniValue()
+
+	SetDataIniValue()
+		Set a value for Plugin in Plugin Specific ini file
+	Parameters:
+		Key
+			The key of the ini
+		Value
+			The value to assign to the key
+*/
+	SetDataIniValue(Key, Value)	{
+		strIniFile := MfString.Format("{0}\{1}", AS_AppDatapath, MiniFrameworkHelper.MiniFrameworkHelperIniFile)
+		Mfunc.IniWrite(Value, strIniFile, "DATA", Key)
+		
+	}
+; 	End:SetDataIniValue() ;}
+;{ 	SetCurrentHelpObject()
+	SetCurrentHelpObject() {
+		_sObj := Trim(Public.GetClipboardData())
+		this.m_CurrenthelpObject := ""
+		this.m_HelClassName := "" ; set the display property
+		if(MfString.IsNullOrEmpty(_sObj))
+		{
+			MiniFrameworkHelper.ShowProgress("Help Default Object has been cleared")
+		}
+		else
+		{
+			cName := this.GetClassHelpName(_sObj)
+			if (MfString.IsNullOrEmpty(cName))
+			{
+				MiniFrameworkHelper.ShowProgress(MfString.Format("'{0}' is not a valid class for help lookup", _sObj))
+			}
+			else
+			{
+				this.m_HelClassName := _sObj ; set for display purposes
+				this.m_CurrenthelpObject := cName
+				MiniFrameworkHelper.ShowProgress(MfString.Format("Help Default Object is set to {0}", _sObj))
+			}
+		}
+	}
+; 	End:SetCurrentHelpObject() ;}
+;{ 	DisplayCurrentHelpObject()
+	DisplayCurrentHelpObject() {
+		If (MfString.IsNullOrEmpty(this.HelClassName))
+		{
+			MiniFrameworkHelper.ShowProgress("No Help Object currently Set")
+		}
+		else
+		{
+			MiniFrameworkHelper.ShowProgress(MfString.Format("Help Default Object is set to {0}", this.HelClassName))
+		}
+	}
+; 	End:DisplayCurrentHelpObject() ;}
+;{ 	SetHelperMiniFrameworkHelpLocation
+/*
+	Method: SetHelperMiniFrameworkHelpLocation()
+
+	SetHelperMiniFrameworkHelpLocation()
+		Sets the location on the Mini-Framework Helpfile into ini for quick access or custom location
+	Returns:
+		Returns true if success locating and setting help file location; Otherwise false
+	Remarks:
+		Static Method
+		Checkes the registry location for Mini-Framework version running this class and uses that help file
+		if it exist; Otherwise prompts user for location of help file.
+*/
+	SetHelperMiniFrameworkHelpLocation() {
+		try
+		{
+			SelectedFile := MiniFrameworkHelper.GuessHelpFileLocation()
+			if (MfString.IsNullOrEmpty(SelectedFile) = false)
+			{
+				MiniFrameworkHelper.SetDataIniValue("HelpLocation", SelectedFile)
+				return true
+			}
+		}
+		catch e
+		{
+			; do nothing
+		}
+		
+		SelectedFile := Mfunc.FileSelectFile(3, , "Select Mini-Framework Help File", "Help File (*.chm)")
+		if (MfString.IsNullOrEmpty(SelectedFile))
+		{
+			return false
+		}
+		MiniFrameworkHelper.SetDataIniValue("HelpLocation", SelectedFile)
+		return true
+	}
+; 	End:SetHelperMiniFrameworkHelpLocation ;}
+;{ 	ShowProgress()
+/*
+	Method: ShowProgress()
+
+	ShowProgress()
+		Displays a popup messag for a specific amoount of time
+	Parameters:
+		Message
+			The Message to display as a popup
+		DisplayTime
+			The amoun of time in Milliseconds to display the message
+			The default length is 1000 for 1 second.
+	Remarks:
+		If DisplayTime &gt; 30000 then it will be set at 30000 ( 30 seconds )
+*/
+	ShowProgress(Message, DisplayTime = 1000) {
+		if (MfString.IsNullOrEmpty(Message))
+		{
+			Progress, Off
+			return
+		}
+		_time := MfInteger.GetValue(DisplayTime)
+		if (_Time &lt;= 0)
+		{
+			Progress, Off
+			return
+		}
+		; make a maximum of 30 seconds display time
+		if (_time &gt; 30000)
+		{
+			_time = 30000
+		}
+		_msg := MfString.GetValue(Message)
+		Progress, Off
+		Progress, m2 b fs13 zh0 WMn700, %_msg%
+		sleep, %_time%
+		Progress, Off
+		
+	}
+; 	End:ShowProgress() ;}
+;{ 	WBGet()
+	; https://autohotkey.com/board/topic/96530-ieget-issue/
+	; https://autohotkey.com/board/topic/47052-basic-webpage-controls-with-javascript-com-tutorial/
+	WBGet(WinTitle="ahk_class IEFrame", Svr#=1) { ; based on ComObjQuery docs
+	   static   msg := DllCall("RegisterWindowMessage", "str", "WM_HTML_GETOBJECT")
+	   ,   IID := "{0002DF05-0000-0000-C000-000000000046}" ; IID_IWebBrowserApp
+	;  ,   IID := "{332C4427-26CB-11D0-B483-00C04FD90119}" ; IID_IHTMLWindow2
+	   SendMessage msg, 0, 0, Internet Explorer_Server%Svr#%, %WinTitle%
+	   if (ErrorLevel != "FAIL") {
+		  lResult:=ErrorLevel, VarSetCapacity(GUID,16,0)
+		  if DllCall("ole32\CLSIDFromString", "wstr","{332C4425-26CB-11D0-B483-00C04FD90119}", "ptr",&amp;GUID) &gt;= 0 {
+			 DllCall("oleacc\ObjectFromLresult", "ptr",lResult, "ptr",&amp;GUID, "ptr",0, "ptr*",pdoc)
+			 return ComObj(9,ComObjQuery(pdoc,IID,IID),1), ObjRelease(pdoc)
+		  }
+	   }
+	}
+	
+; 	End:WBGet() ;}
+; End:Methods ;}
+;{ 	Search methods
+;{ 		SearchHelp()
+/*
+	Method: SearchHelp()()
+
+	SearchHelp()()
+		Sets the help file to be ready to search
+	Returns:
+		Returns truen if the Help File was fund and the side control is activated for search
+	Throws:
+		Throws MfException if
+	Remarks:
+		Internal Method
+		If searchbar is not availalbe then a message is displayed to unhide the search bar and try again
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	SearchHelp() {
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		WinActivate, %sWinTitle%
+		
+		;WinActivate ahk_class HH Parent  ; Activate window before accessing the controls
+		
+		Sleep, 100
+		ah_SidebarVisible := ""
+		ControlGet ah_SidebarVisible, Visible, , HH Child2, %sWinTitle% ; Check sidebar visibility
+		if not ah_SidebarVisible
+		{
+		  MsgBox 64, Information, Turn on the sidebar to enable searching.
+		  Return false ; We cannot go further
+		}
+		SendMessage 0x130C, 2,, SysTabControl321, %sWinTitle%  ; 0x130C is TCM_SETCURSEL. Select the 3. 
+		SetTitleMatchMode , %tmm%
+		this.ProperClick("SysTabControl321")
+		return true
+	}
+; 		End:SearchHelp() ;}
+;{ 		ProperClick()
+/*
+	Method: ProperClick()
+
+	ProperClick()
+		Sends a Click to a control and freezes the mouse while control is taking place
+	Parameters:
+		ControlName
+			The Name of the control to send click to click
+	Remarks:
+		Internal Method
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	ProperClick(ControlName) {
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		WinActivate, %sWinTitle%
+		SetTitleMatchMode , %tmm%
+		BlockInput MouseMove  ; Disable mouse movement to prevent user interaction
+		ControlClick %ControlName%, %sWinTitle%, , , , NA  ; Perform the click (NA is required!)
+		BlockInput MouseMoveOff  ; Enable mouse movement
+	}
+; 		End:ProperClick() ;}
+;{ 		SearchFieldVisible()
+/*
+	Method: SearchFieldVisible()
+
+	SearchFieldVisible()
+		Checks to see if the Search Control is Visible
+	Returns:
+		Returns true if search control is visible; Otherwise false.
+	Remarks:
+		Internal Method
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	SearchFieldVisible() {
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		WinActivate, %sWinTitle%
+		ControlGet ah_SearchVisible, Visible, , Edit1,  %sWinTitle%  ; Check Edit1 control visibility
+		SetTitleMatchMode , %tmm%
+		Return ah_SearchVisible
+	}
+; 		End:SearchFieldVisible() ;}
+;{ 		DoHelpSearch()
+/*
+	Method: DoHelpSearch()
+
+	DoHelpSearch()
+		Searches the helpfile for SearchValue if passed in; Otherwise search from selected text
+	Parameters:
+		SearchValue
+			If SearchValue is not null then it is the text that is searched for.
+			Otherwise selected texted from editor is searched
+	Remarks:
+		Public Method
+		Will open helpfile if closed.
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	DoHelpSearch(SearchValue ="") {
+		If (MfString.IsNullOrEmpty(SearchValue))
+		{
+			SearchValue :=  this.GetCurrentWord()
+		}
+		;MsgBox , Search Word, %SearchValue%
+		this.OpenOrActivateHelpFile()
+		if (this.SearchHelp() = false)
+		{
+			MsgBox 16, Error, Invalid search field.
+			return
+		}
+		if not this.SearchFieldVisible()
+		{  ; The script should never go here, however it could happen in a future version of HTML Help Viewer
+		  MsgBox 16, Error, Invalid search field.
+		  Return
+		}
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		;ControlSetText Edit1, %SearchValue%, ahk_class HH Parent  ; Set the search field text
+		ControlSetText Edit1, %SearchValue%, %sWinTitle%  ; Set the search field text
+		ControlFocus Edit1
+		SetTitleMatchMode , %tmm%
+		this.SendSearchEnter()
+	}
+; 		End:DoHelpSearch() ;}
+;{ 		SendSearchEnter()
+/*
+	Method: SendSearchEnter()
+
+	SendSearchEnter()
+		Focus tabpage for search and clicks the search button
+	Remarks:
+		Internal Method
+		Avoids Activating using 'ahk_class HH Parent' this makes it possible to have classes for loading seperate help files as well
+*/
+	SendSearchEnter() {
+		sWinTitle := MiniFrameworkHelper.HlpWinTitle
+		tmm := A_TitleMatchMode
+		SetTitleMatchMode, 3
+		ControlGetFocus ah_FocusedControl, %sWinTitle%
+		SetTitleMatchMode , %tmm%
+		
+		SendMessage 0x130B,,, SysTabControl321  ; 0x130B = TCM_GETCURSEL. Which tabpage is selected? Answer is ErrorLevel
+		if (ErrorLevel = 2 and ah_FocusedControl = "Edit1")  ; Is search field focused?
+		{
+		  this.ProperClick("Button2")  ; Start searching
+		  Sleep 100  ; Waiting to finish searching
+		  Loop 3
+			IfWinActive ahk_class #32770  ; Is it still searching?
+			  Sleep 100
+		  IfWinActive ahk_class #32770  ; Error dialog
+			WinClose  ; Close dialog, it is an error
+		  else
+			this.ProperClick("Button3")  ; Show first page in the list    
+		}
+		else
+		  Send {Enter}  ; Just send Enter if we are not searching
+	}
+; 		End:SendSearchEnter() ;}
+; 	End:Search methods ;}
+;{ Internal Methods
+;{ 	_GetDotName()
+	_GetDotName(str) {
+		mfs := new MfString(str)
+		mfsResult := new MfString()
+		if (mfs.IndexOf(".") &gt; -1)
+		{
+			sPrefix := this.GetClassHelpName(mfs.Value)
+			bPrefix := true
+			if(MfString.IsNullOrEmpty(sPrefix))
+			{
+				bPrefix := false
+			}
+			split := mfs.Split(".", (MfStringSplitOptions.Instance.RemoveEmptyEntries.Value | MfStringSplitOptions.Instance.Trim.Value))
+			iMax := split.Count -1
+			for i, v in split
+			{
+				s := v.Value
+				if (i = 0)
+				{
+					if (bPrefix = false)
+					{
+						sPrefix := this.GetClassHelpName(s)
+						if(MfString.IsNullOrEmpty(sPrefix))
+						{
+							sPrefix := s
+						}
+					}
+				}
+				else
+				{
+					if ( i = iMax )
+					{
+						s := this._CleanString(s)
+					}
+					if (!(s = "Instance"))
+					{
+						mfsResult.Append(sPrefix)
+						mfsResult.Append(s)
+					}
+				}
+			}
+		}
+		return mfsResult.Value
+	}
+; 	End:_GetDotName() ;}
+;{ 	_CleanString()
+	_CleanString(str) {
+		RegExMatch(str, "i)([a-z]+)", result) 
+		return result
+	}
+; 	End:_CleanString() ;}
+;{ 	_GetOpenUrl()
+	_GetOpenUrl(sTopic) {
+		sHelpUrl := MfString.Format("mk:@MSITStore:{0}::/{1}.htm", this.HelpFile , sTopic)
+		return sHelpUrl
+	}
+; 	End:_GetOpenUrl() ;}
+;{ 	_GetClosedUrl()
+	_GetClosedUrl(sTopic) {
+		sHelpUrl := MfString.Format("{0}::/{1}.htm", this.HelpFile, sTopic)
+		return sHelpUrl
+	}
+; 	End:_GetClosedUrl() ;}
+;{ 	_GetPath()
+/*
+	Method: _GetPath()
+
+	_GetPath()
+		Gets the Path section of a file path
+	Returns:
+		Returns the path section of file path
+	Throws:
+		Throws MfException if unable to get path section
+*/
+	_GetPath(FilePath) {
+		sPath := ""
+		try
+		{
+			iLast := MfString.LastIndexOf(FilePath, "\")
+			sPath := MfString.Substring(FilePath, 0, iLast)
+		}
+		catch e
+		{
+			ex := new MfException(MfString.Format("Unable to get path from '{0}'", FilePath))
+			ex.SetProp(A_LineFile, A_LineNumber, A_ThisFunc)
+			throw ex
+		}
+		return sPath
+	}
+; 	End:_GetPath() ;}
+; End:Internal Methods ;}
+;{ Properties
+;{ CurrenthelpObject
+	m_CurrenthelpObject := ""
+	/*!
+		Property: CurrenthelpObject [get/set]
+			Gets or sets the CurrenthelpObject value associated with the this instance
+		Value:
+			Var of String
+		Remarks:
+			When set to the value of an object or class within the Mini-Framework it will be used to prefix method and properties
+			of searchee
+			For Example if set to MfString. The then Searching for GetValue would search for MfString.GetValue
+	*/
+	CurrenthelpObject[]
+	{
+		get {
+			return this.m_CurrenthelpObject
+		}
+		set {
+			ex := new MfNotSupportedException(MfEnvironment.Instance.GetResourceString("NotSupportedException_Readonly_Property"))
+			ex.SetProp(A_LineFile, A_LineNumber, "CurrenthelpObject")
+			Throw ex
+		}
+	}
+; End:CurrenthelpObject ;}
+;{ HelClassName
+		m_HelClassName := ""
+	/*!
+		Property: HelClassName [get]
+			Gets the HelClassName Actual Name that is currently set for Help lookup using class name
+		Value:
+			Var string
+		Remarks:
+			Readonly Property
+			Used in conjunction with CurrentHelpObject property
+	*/
+	HelClassName[]
+	{
+		get {
+			return this.m_HelClassName
+		}
+		set {
+			ex := new MfNotSupportedException(MfEnvironment.Instance.GetResourceString("NotSupportedException_Readonly_Property"))
+			ex.SetProp(A_LineFile, A_LineNumber, "HelClassName")
+			Throw ex
+		}
+	}
+; End:HelClassName ;}
+;{ HelpFile
+	m_HelpFile := Null
+/*!
+	Property: HelpFile [get/set]
+		Gets or sets the HelpFile value associated with the this instance
+	Value:
+		Var representing the HelpFile property of the instance
+*/
+	HelpFile[]
+	{
+		get {
+			return this.m_HelpFile
+		}
+		set {
+			this.m_HelpFile := value
+			return this.m_HelpFile
+		}
+	}
+; End:HelpFile ;}
+	;{ IniFile
+	m_IniFile := ""
+/*!
+	Property: IniFile [get/set]
+		Gets or sets the IniFile value associated with the this instance
+	Value:
+		Var representing the IniFile property of the instance
+*/
+	IniFile[]
+	{
+		get {
+			return this.m_IniFile
+		}
+		set {
+			this.m_IniFile := MfString.GetValue(value)
+			return this.m_IniFile
+		}
+	}
+; End:IniFile ;}
+;{ Path
+	m_Path := ""
+/*!
+	Property: Path [get]
+		Gets the Path value associated with the this instance
+	Value:
+		Var representing the Path property of the instance
+	Remarks:
+		Readonly Property
+*/
+	Path[]
+	{
+		get {
+			return this.m_Path
+		}
+		set {
+			ex := new MfNotSupportedException(MfEnvironment.Instance.GetResourceString("NotSupportedException_Readonly_Property"))
+			ex.SetProp(A_LineFile, A_LineNumber, "Path")
+			Throw ex
+		}
+	}
+; End:Path ;}
+;{ ShowProgres
+	m_ShowProgres := true
+	/*!
+		Property: ShowProgres [get/set]
+			Gets or sets the ShowProgres value associated with the this instance
+		Value:
+			Var representing the ShowProgres property of the instance
+	*/
+	ShowProgres[]
+	{
+		get {
+			return this.m_ShowProgres
+		}
+		set {
+			this.m_ShowProgres := MfBool.GetValue(value)
+			return this.m_ShowProgres
+		}
+	}
+; End:ShowProgres ;}
+; End:Properties ;}
+}</code>
+      <hotstrings />
+      <commands />
+    </include>
+  </includes>
+  <dataItems>
+    <dataItem overwrite="true">
+      <name>ClassMap</name>
+      <dataFileName>Mini-FrameworkHelpObjectMap.ini</dataFileName>
+      <dataValue>[CLASS]
+MfArgumentException = MfAE19
+MfArgumentNullException = MfANE23
+MfArgumentOutOfRangeException = MfAOORE29
+MfArithmeticException = MfAE21
+MfDivideByZeroException = MfDByZ
+MfDriveNotFoundException = MfDNFE24
+MfDirectoryNotFoundException = MfDNFE28
+MfException = MfException
+MfFileNotFoundException = MfFNFE23
+MfFormatException = MfFE17
+MfInvalidCastException = MfICE22
+MfInvalidOperationException = MfIOE27
+MfIOException = MfIOE13
+MfIndexOutOfRangeException = MfIOORE26
+MfMemberAccessException = MfMAE23
+MfMissingFieldException = MfMFE23
+MfMissingMemberException = MfMME25
+MfMissingMethodException = MfMME24
+MfNotImplementedException = MfNIE25
+MfNonMfObjectException = MfNMOE22
+MfNullReferenceException = MfNRE24
+MfNotSupportedException = MfNSE23
+MfOverflowException = MfOE19
+MfSystemException = MfSE17
+MfAttribute = MfAttribute
+MfBool = MfBool
+MfByte = MfByte
+MfChar = MfChar
+MfCollection = MfCollection
+MfCollectionBase = MfCB16
+MfDictionary = MfDictionary
+MfDictionaryBase = MfDB16
+MfDictionaryEntry = MfDE17
+MfDigitShapes = MfDigitShapes
+MfEnvironment = MfEnvironment
+MfEnum = MfEnum
+MfEnumerableBase = MfEB16
+MfEqualityComparerBase = MfECB22
+MfEqualsOptions = MfEqualsOptions
+MfFlagsAttribute = MfFlagsAttribute
+MfFloat = MfFloat
+MfFormatProvider = MfFP16
+MfGenericList = MfGenericList
+MfHashTable = MfHashTable
+MfInt16 = MfInt16
+MfInt64 = MfInt64
+MfInteger = MfInteger
+MfList = MfList
+MfListBase = MfListBase
+MfNumberFormatInfo = MfNFI18
+MfNumberFormatInfoBase = MfNFIB22
+MfNumberStyles = MfNS14
+MfNull = MfNull
+MfNullBase = MfNullBase
+MfObject = MfObject
+MfOrdinalComparer = MfOC17html
+MfParams = MfParams
+MfPrimitive = MfPrimitive
+MfQueue = MfQueue
+MfSetFormatNumberType = MfSFNT
+MfSingletonBase = MfSB15
+MfStack = MfStack
+MfString = MfString
+MfStringComparison = MfSC18
+MfStringSplitOptions = MfSSO20
+MfTimeSpan = MfTimeSpan
+MfType = MfType
+MfTypeCode = MfTypeCode
+MfUnicodeCategory = MfUC17
+MfValueType = MfValueType
+MfVersion = MfVersion
+Mfunc = Mfunc
+
+[MFUNC_METHODS]
+ControlGet = MfuncControlGet
+ControlGetFocus = MfuncControlGetFocus
+ControlGetText = MfuncControlGetText
+DriveGet = MfuncDriveGet
+DriveSpaceFree = MfuncDriveSpaceFree
+EnvGet = MfuncEnvGet
+FileAppend = MfuncFileAppend
+FileCopy = MfuncFileCopy
+FileCopyDir = MfuncFileCopyDir
+FileCreateDir = MfuncFileCreateDir
+FileDelete = MfuncFileDelete
+FileGetAttrib = MfuncFileGetAttrib
+FileGetShortcut = MfuncFileGetShortcut
+FileGetSize = MfuncFileGetSize
+FileGetVersion = MfuncFileGetVersion
+FileGetTime = MfuncFileGetTime
+FileMove = MfuncFileMove
+FileMoveDir = MfuncFileMoveDir
+FileRead = MfuncFileRead
+FileReadLine = MfuncFileReadLine
+FileRemoveDir = MfuncFileRemoveDir
+FileSelectFile = MfuncFileSelectFile
+FileSelectFolder = MfuncFileSelectFolder
+FileSetAttrib = MfuncFileSetAttrib
+FormatTime = MfuncFormatTime
+Functions = MfuncFunctions
+GuiControlGet = MfuncGuiControlGet
+IfBetween = MfuncIfBetween
+IfContains = MfuncIfContains
+IfIn = MfuncIfIn
+IfIs = MfuncIfIs
+IfIsNot = MfuncIfIsNot
+IfNotBetween = MfuncIfNotBetween
+IfNotContains = MfuncIfNotContains
+IfNotIn = MfuncIfNotIn
+ImageSearch = MfuncImageSearch
+IniDelete = MfuncIniDelete
+IniRead = MfuncIniRead
+IniWrite = MfuncIniWrite
+Input = MfuncInput
+InputBox = MfuncInputBox
+IsFloat = MfuncIsFloat
+IsInstance = MfuncIsInstance
+IsInteger = MfuncIsInteger
+IsNumeric = MfuncIsNumeric
+MouseGetPos = MfuncMouseGetPos
+PixelGetColor = MfuncPixelGetColor
+PixelSearch = MfuncPixelSearch
+Process = MfuncProcess
+Random = MfuncRandom
+RegRead = MfuncRegRead
+RegWrite = MfuncRegWrite
+Run = MfuncRun
+RunWait = MfuncRunWait
+SecondsPassed = MfuncSecondsPassed
+SetFormat = MfuncSetFormat
+SoundGet = MfuncSoundGet
+SoundGetWaveVolume = MfuncSoundGetWaveVolume
+SplitPath = MfuncSplitPath
+StatusBarGetText = MfuncStatusBarGetText
+StringGetPos = MfuncStringGetPos
+StringLeft = MfuncStringLeft
+StringLen = MfuncStringLen
+StringLower = MfuncStringLower
+StringMid = MfuncStringMid
+StringReplace = MfuncStringReplace
+StringRight = MfuncStringRight
+StringSplit = MfuncStringSplit
+StringTrimLeft = MfuncStringTrimLeft
+StringTrimRight = MfuncStringTrimRight
+StringUpper = MfuncStringUpper
+SysGet = MfuncSysGet
+Transform = MfuncTransform
+WinActivate = MfuncWinActivate
+WinGet = MfuncWinGet
+WinGetActiveTitle = MfuncWinGetActiveTitle
+WinGetClass = MfuncWinGetClass
+WinGetText = MfuncWinGetText
+WinGetTitle = MfuncWinGetTitle
+
+[KNOW_METHODS]
+SetProp = MfExceptionSetProp
+AddAttribute = MfObjectAddAttribute
+GetAttribute = MfObjectGetAttribute
+GetAttributes = MfObjectGetAttributes
+GetIndexOfAttribute = MfObjectGetIndexOfAttribute
+GetType = MfObjectGetType
+HasAttribute = MfObjectHasAttribute
+Is = MfObjectIs
+IsInstance = MfObjectIsInstance
+IsMfObject = MfObjectIsMfObject
+IsObjInstance = MfObjectIsObjInstance
+MemberwiseClone = MfObjectMemberwiseClone
+ReferenceEquals = MfObjectReferenceEquals
+VerifyIsInstance = MfObjectVerifyIsInstance
+VerifyIsNotInstance = MfObjectVerifyIsNotInstance
+GetTrimmed = MfFloatGetTrimmed
+_NewEnum = MfEB16_NewEnum
+TryParseItem = MfEnumTryParseItem
+AddFlag = MfEnumAddFlaghtml
+RemoveFlag = MfEnumRemoveFlaghtml
+IsNull = MfNullIsNull
+Dequeue = MfQueueDequeue
+Enqueue = MfQueueEnqueue
+Pop = MfStackPop
+Push = MfStackPush
+Duration = MfTimeSpanDuration
+FromDays = MfTimeSpanFromDays
+FromHours = MfTimeSpanFromHours
+FromMilliseconds = MfTimeSpanFromMilliseconds
+FromMinutes = MfTimeSpanFromMinutes
+FromSeconds = MfTimeSpanFromSeconds
+FromTicks = MfTimeSpanFromTicks
+Difference = MfStringDifference
+EndsWith = MfStringEndsWith
+IsNullOrEmpty = MfStringIsNullOrEmpty
+LastIndexOf = MfStringLastIndexOf
+PadLeft = MfStringPadLeft
+PadRight = MfStringPadRight
+Reverse = MfStringReverse
+Split = MfStringSplit
+StartsWith = MfStringStartsWith
+Substring = MfStringSubstring
+ToCharArray = MfStringToCharArray
+ToLower = MfStringToLower
+ToTitle = MfStringToTitle
+ToUpper = MfStringToUpper
+Trim = MfStringTrim
+TrimEnd = MfStringTrimEnd
+TrimStart = MfStringTrimStart
+UnEscape = MfStringUnEscape
+
+[KNON_PROPERTIES]
+InnerException = MfExceptionInnerException
+HrResult = MfExceptionHrResult
+CommonAppData = MfEnvironmentCommonAppData
+CommonDesktop = MfEnvironmentCommonDesktop
+CommonDocuments = MfEnvironmentCommonDocuments
+CommonMusic = MfEnvironmentCommonMusic
+CommonPictures = MfEnvironmentCommonPictures
+CommonStartMenu = MfEnvironmentCommonStartMenu
+CommonStartup = MfEnvironmentCommonStartup
+CommonVideo = MfEnvironmentCommonVideo
+NewLine = MfEnvironmentNewLine
+ResourceFolder = MfEnvironmentResourceFolder
+TickCount = MfEnvironmentTickCount
+UserAppDataLocal = MfEnvironmentUserAppDataLocal
+UserAppDataRoaming = MfEnvironmentUserAppDataRoaming
+UserDesktop = MfEnvironmentUserDesktop
+UserDocuments = MfEnvironmentUserDocuments
+UserFavorites = MfEnvironmentUserFavorites
+UserMusic = MfEnvironmentUserMusic
+UserPictures = MfEnvironmentUserPictures
+UserStartMenu = MfEnvironmentUserStartMenu
+UserStartup = MfEnvironmentUserStartup
+UserVideo = MfEnvironmentUserVideo
+ParentEnum = MfEnumEnumItemParentEnum
+DecimalPlaces = MfFloatDecimalPlaces
+TotalWidth = MfFloatTotalWidth
+ReturnAsObject = MfPrimitiveReturnAsObject
+AllowEmptyString = MfParamsAllowEmptyString
+AllowEmptyValue = MfParamsAllowEmptyValue
+AllowOnlyAhkObj = MfParamsAllowOnlyAhkObj
+ConvertEnumItemType = MfParamsConvertEnumItemType
+Instance = MfSB15Instancehtml
+TicksPerHour = MfTimeSpanTicksPerHour
+TicksPerMillisecond = MfTimeSpanTicksPerMillisecond
+TicksPerMinute = MfTimeSpanTicksPerMinute
+TicksPerSecond = MfTimeSpanTicksPerSecond
+TotalDays = MfTimeSpanTotalDays
+TotalHours = MfTimeSpanTotalHours
+TotalMilliseconds = MfTimeSpanTotalMilliseconds
+TotalMinutes = MfTimeSpanTotalMinutes
+TotalSeconds = MfTimeSpanTotalSeconds
+ClassName = MfTypeClassName
+IsBoolean = MfTypeIsBoolean
+IsByte = MfTypeIsByte
+IsChar = MfTypeIsChar
+IsEmpty = MfTypeIsEmpty
+IsEnum = MfTypeIsEnum
+IsEnumItem = MfTypeIsEnumItem
+IsFloat = MfTypeIsFloat
+IsInteger = ::/MfTypeIsInteger
+IsInt16 = MfTypeIsInt16
+IsInt32 = MfTypeIsInt32
+IsInt64 = MfTypeIsInt64
+IsIntegerNumber = MfTypeIsIntegerNumber
+IsNumber = MfTypeIsNumber
+IsString = MfTypeIsString
+TypeCode = MfTypeTypeCode
+TypeName = MfTypeTypeName
+Major = MfVersionMajor
+Minor = MfVersionMinor
+Build = MfVersionBuild
+Revision = MfVersionRevision
+MajorRevision = MfVersionMajorRevision
+MinorRevision = MfVersionMinorRevision
+</dataValue>
+    </dataItem>
+  </dataItems>
+</plugin>

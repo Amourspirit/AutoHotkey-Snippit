@@ -1,0 +1,9 @@
+*.7z
+/*.exe
+*.bak
+*-doc
+/inc
+/AppData
+*Orig.ahk
+*.orig.ahk
+*.bat

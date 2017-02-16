@@ -1,0 +1,14 @@
+*.7z
+/*.exe
+*.bak
+AhkSnippyTool-singleFile.ahk
+AhkSnippyTool.ahk.ini
+/XmlTest
+*-doc
+/inc
+*Orig.ahk
+*.orig.ahk
+Settings.ini
+*.bat
+/ProfileSwap
+/Install-Includes

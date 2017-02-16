@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<profile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" minVersion="0.2.0.0" name="Windows Global" globalProfile="true" schemaVersion="1.1">
+  <codeLanguage>
+    <codeName>Windows Global</codeName>
+    <description>Gloabl Profile for windows</description>
+    <paths>
+      <mainData>Windows Global</mainData>
+      <plugin>Windows Global</plugin>
+      <snips>Windows Global</snips>
+    </paths>
+  </codeLanguage>
+</profile>

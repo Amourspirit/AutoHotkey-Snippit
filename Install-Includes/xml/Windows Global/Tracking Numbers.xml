@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" profileName="Windows Global" name="Tracking Numbers" schemaVersion="1.1">
+  <commands />
+  <hotstrings />
+  <includes>
+    <include>
+      <name>Tracking Numbers</name>
+      <description></description>
+      <snippit>Tracking_Numbers_Tracking_Numbers.ahk</snippit>
+      <code>:o:tn::   ; Generates the tracking number based on date and time (111016856)
+{
+	FormatTime, CurrentDateTime,, yMdhm  
+	Send %CurrentDateTime%
+	return
+}
+
+:o:tnl::   ; Generates the tracking number based on date and time (111016856)
+{
+	FormatTime, CurrentDateTime,, yyMMddhhmmss 
+	Send %CurrentDateTime%
+	return
+}
+
+:o:.sdn::   ; Generates the tracking number based on date and time (2011.10.16)
+{
+	FormatTime, CurrentDateTime,, yyyy.MM.dd  
+	Send %CurrentDateTime%
+	return
+}
+:o:-sdn::   ; Generates the tracking number based on date and time (2011-10-16)
+{
+	FormatTime, CurrentDateTime,, yyyy-MM-dd  
+	Send %CurrentDateTime%
+	return
+}
+
+:o:sdn::   ; Generates the tracking number based on date and time (20111016)
+{
+	FormatTime, CurrentDateTime,, yyyyMMdd  
+	Send %CurrentDateTime%
+	return
+}
+
+
+:o:.ldn::   ; Generates the tracking number based on date and time (2011.10.16_09.07)
+{
+	FormatTime, CurrentDateTime,, yyyy.MM.dd_hh.mm
+	Send %CurrentDateTime%
+	return
+}
+
+:o:-ldn::   ; Generates the tracking number based on date and time (2011-10-16_09-07)
+{
+	FormatTime, CurrentDateTime,, yyyy-MM-dd_hh-mm
+	Send %CurrentDateTime%
+	return
+}
+
+:o:ldn::   ; Generates the tracking number based on date and time (20111016_0906)
+{
+	FormatTime, CurrentDateTime,, yyyyMMdd_hhmm
+	Send %CurrentDateTime%
+	return
+}</code>
+      <hotstrings>
+        <hotstring trigger="tn">
+          <name>Tracking Number</name>
+          <description>Generates the tracking number based on date and time (111016856)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger="tnl">
+          <name>Tracking Number Long</name>
+          <description>Generates the tracking number based on date and time (111016856)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger=".sdn">
+          <name>Short Date Number</name>
+          <description>Generates the tracking number based on date and time (2011.10.16)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger="-snd">
+          <name>Short Date Number</name>
+          <description>Generates the tracking number based on date and time (2011-10-16)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger="sdn">
+          <name>Short Date Number</name>
+          <description>Generates the tracking number based on date and time (20111016)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger=".ldn">
+          <name>Long Date Number</name>
+          <description>Generates the tracking number based on date and time (2011.10.16_09.07)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger="-ldn">
+          <name>Long Date Number</name>
+          <description>Generates the tracking number based on date and time (2011-10-16_09-07)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+        <hotstring trigger="ldn">
+          <name>Long Date Number</name>
+          <description>Generates the tracking number based on date and time (20111016_0906)</description>
+          <category>Tracking_x0020_Number</category>
+        </hotstring>
+      </hotstrings>
+      <commands />
+    </include>
+  </includes>
+</plugin>

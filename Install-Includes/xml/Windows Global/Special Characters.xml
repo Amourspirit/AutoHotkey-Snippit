@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" profileName="Windows Global" name="Special Characters" schemaVersion="1.1">
+  <commands />
+  <hotstrings />
+  <includes>
+    <include>
+      <name>Special Chars</name>
+      <description>Special Chars such as © and ®</description>
+      <snippit>hotstring_special_chars.ahk</snippit>
+      <code>;{  Hotstrings Special Chars
+:o?:]rtm:: ; Registered trade mark ΍
+send, % "{Alt Down}{Numpad0}{Numpad1}{Numpad7}{Numpad4}{Alt Up}"
+return
+
+:o?:]ccr:: ; Copyright ɍ
+send, % "{Alt Down}{Numpad0}{Numpad1}{Numpad6}{Numpad9}{Alt Up}"
+return
+; End:Hotstrings Special Chars ;}</code>
+      <hotstrings>
+        <hotstring trigger="]RTM">
+          <name>® Registered Trade Mark</name>
+          <description>Wirtes ® Registered Trademak</description>
+          <category>Char</category>
+        </hotstring>
+        <hotstring trigger="]CCR">
+          <name>© Copyright</name>
+          <description>Writes © Copyright</description>
+          <category>Char</category>
+        </hotstring>
+      </hotstrings>
+      <commands />
+    </include>
+  </includes>
+</plugin>

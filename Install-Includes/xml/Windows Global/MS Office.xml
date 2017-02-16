@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" profileName="Windows Global" name="MS Office" schemaVersion="1.1">
+  <commands>
+    <command hotkey="!#W">
+      <name>Ms Word</name>
+      <description>Run or Activate Microsoft Word</description>
+      <category>Office</category>
+      <label>office_ms_word</label>
+      <snippit>office_ms_word</snippit>
+      <code>office_ms_word:
+RunOrActivate("Winword.exe")
+return</code>
+    </command>
+    <command hotkey="!#E">
+      <name>Ms Excel</name>
+      <description>Run or Activate Microsoft Excel</description>
+      <category>Office</category>
+      <label>ms_office_excel</label>
+      <snippit>ms_office_excel</snippit>
+      <code>ms_office_excel:
+RunOrActivate("excel.exe")
+return</code>
+    </command>
+    <command hotkey="!#P">
+      <name>Ms Powerpoint</name>
+      <description>Run or Activate Microsoft Powerpoint</description>
+      <category>Office</category>
+      <label>ms_office_powerpoint</label>
+      <snippit>ms_office_powerpoint</snippit>
+      <code>ms_office_powerpoint:
+RunOrActivate("powerpnt.exe")
+return</code>
+    </command>
+  </commands>
+  <hotstrings />
+  <includes />
+</plugin>

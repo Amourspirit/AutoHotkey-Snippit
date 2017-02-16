@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0.0.0" profileName="Windows Global" name="Date &amp; Time" schemaVersion="1.1">
+  <commands />
+  <hotstrings />
+  <includes>
+    <include>
+      <name>Hotstring Date Time</name>
+      <description>Hotstring Date and Time shortcut inputs</description>
+      <snippit>Hotstring_Date_Time</snippit>
+      <code>;{  Hotstring Date Time
+::]d::  ; the current date and time Wednesday, March 9 2011
+FormatTime, CurrentDateTime,, dddd, MMMM d yyyy
+SendInput %CurrentDateTime%
+return
+
+::}dt::  ; the current date and time 03/09/2011 (March 9, 2011)
+FormatTime, CurrentDateTime,, MM/dd/yyyy h:mm tt
+SendInput %CurrentDateTime%
+return
+
+::}d::  ; the current date and time 03/09/2011 (March 9, 2011)
+FormatTime, CurrentDateTime,, MM/dd/yyyy
+SendInput %CurrentDateTime%
+return
+
+::]dt::  ; the current date
+FormatTime, CurrentDateTime,, dddd, MMMM d yyyy h:mm tt  ; It will look like 9/1/2005 3:53 PM
+SendInput %CurrentDateTime%
+return
+::]t::  ; The current time 05:03 PM
+FormatTime, CurrentTime,, hh:mm tt  ; It will look like 05:03 PM
+SendInput %CurrentTime%
+return
+; End:Hotstring Date Time ;}</code>
+      <hotstrings>
+        <hotstring trigger="]d">
+          <name>Current Date Long</name>
+          <description>Current date format dddd, MMMM d yyyy. Eg: Wednesday, April 6 2016</description>
+          <category>Date_x0020_Time</category>
+        </hotstring>
+        <hotstring trigger="}dt">
+          <name>Current Date time</name>
+          <description>Current date time format MM/dd/yyyy h:mm tt. Eg: 04/06/2016 9:41 PM</description>
+          <category>Date_x0020_Time</category>
+        </hotstring>
+        <hotstring trigger="}d">
+          <name>Current Date</name>
+          <description>Current date format MM/dd/yyyy. Eg:04/06/2016</description>
+          <category>Date_x0020_Time</category>
+        </hotstring>
+        <hotstring trigger="]dt">
+          <name>Current Date Time Long</name>
+          <description>Current date format dddd, MMMM d yyyy h:mm tt. Eg:Wednesday, April 6 2016 9:44 PM</description>
+          <category>Date_x0020_Time</category>
+        </hotstring>
+        <hotstring trigger="]t">
+          <name>Current Time</name>
+          <description>Current Time format hh:mm tt. Eg 09:45 PM</description>
+          <category>Date_x0020_Time</category>
+        </hotstring>
+      </hotstrings>
+      <commands />
+    </include>
+  </includes>
+</plugin>

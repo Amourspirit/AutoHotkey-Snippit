@@ -1,5 +1,9 @@
 #AutoHotkey Snippit
-AutoHotkey Snippit is a Program designed with the intention of having multiple types of Hotkeys, HotStrings and Include Plugins for use in windows Automation.
+AutoHotkey Snippit is a Program designed with the intention of having multiple types of Hotkeys, HotStrings and Include Plugins for use in windows Automation. 
+
+These Hotkeys, HotString and plugins are wrapped in Profiles
+
+These profiles can easily be swapped  and set to work any or selected windows. Profile can easily be swaped to have the same shortcut key or hotstring do a different job in different windows.
 
 ##Installing AutoHotkey Snipit
 AutoHotkey Snippit can be installed via the [AutoHotkeySnippitSetup.exe][1] installer.

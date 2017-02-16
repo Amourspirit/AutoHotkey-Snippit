@@ -12,6 +12,12 @@ Help can be founnd online [here][2] as well AutoHotkey Snippit has a help file w
 ###Sharing Snippits
 AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be exported and import via the Hotlist Application.
 
+####Getting Started
+Having a basic understanding of [AutoHotKey][3] is helpful but not necessary to get started. AutoHotkey Snippit comes with a few templates already installed. The Default profile when installed is Windows Global. Which include shortcust to many of windows control panel items.  
+As well there is an auto correct plugin included with the Windows Global that auto corrects hundreds of spelling mistakes.
+
+The **AutoHotkey Snippit** application is the main launch point for the program and runs in the system tray. If the **AutoHotkey Snipit** is not running in the system tray then no Hotkeys, Hotstring plugins willl be active. Althouth you may stil edit any profiles or plugin using the **Hotlist** application.
+
 **Plugins may contain three flavors.**
 
 * Hotkeys - These are Actions that are taken when a specified hot key is pressed such as Ctrl+Win+A , 

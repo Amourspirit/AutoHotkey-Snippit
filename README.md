@@ -39,6 +39,9 @@ The **AutoHotkey Snippit** application is the main launch point for the program 
 * Data may be part of a plugin to enhance is capability. 
 * Data can be included as Text or Binary 
 
+###Related Project
+**AutoHotkey Snippit Editor** is the editor written in c# for **AutoHhotkey Snippit**. The project files can be found [here][6]
+
 ___
 Note to Developers:  
 AutoHotkey Snippit plugin and profiles are based up xml files. This files are included in the **XSD** folder for developer if needed. The documentation for the xsd files can be found online [here][5]
@@ -50,3 +53,4 @@ Having knowledge of or using he xsd/xml files is not required in any way. The Ho
 [3]:https://autohotkey.com
 [4]:https://github.com/Amourspirit/Mini-Framework
 [5]:https://amourspirit.github.io/AutoHotkey-Snippit/xsd_docs/
+[6]:https://github.com/Amourspirit/AutoHotkey-Snippit-Editor

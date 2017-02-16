@@ -13,8 +13,8 @@ Help can be founnd online [here][2] as well AutoHotkey Snippit has a help file w
 AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be exported and import via the Hotlist Application.
 
 ####Getting Started
-Having a basic understanding of [AutoHotKey][3] is helpful but not necessary to get started. AutoHotkey Snippit comes with a few templates already installed. The Default profile when installed is Windows Global. Which include shortcust to many of windows control panel items.  
-As well there is an auto correct plugin included with the Windows Global that auto corrects hundreds of spelling mistakes.
+Having a basic understanding of [AutoHotKey][3] is helpful but not necessary to get started. **AutoHotkey Snippit** comes with a few templates already installed. The Default profile when installed is *Windows Global.* Which include shortcuts to many of windows control panel items.  
+As well there is an auto correct plugin included with the *Windows Global* that auto corrects hundreds of spelling mistakes.
 
 The **AutoHotkey Snippit** application is the main launch point for the program and runs in the system tray. If the **AutoHotkey Snipit** is not running in the system tray then no Hotkeys, Hotstring plugins willl be active. Althouth you may stil edit any profiles or plugin using the **Hotlist** application.
 
@@ -39,7 +39,14 @@ The **AutoHotkey Snippit** application is the main launch point for the program 
 * Data may be part of a plugin to enhance is capability. 
 * Data can be included as Text or Binary 
 
+___
+Note to Developers:  
+AutoHotkey Snippit plugin and profiles are based up xml files. This files are included in the **XSD** folder for developer if needed. The documentation for the xsd files can be found online [here][5]
+
+Having knowledge of or using he xsd/xml files is not required in any way. The Hotlist application will do all of this automatically when you create or edit a new Profile or plugin. However if a developer needs access to them they are provided.
+
 [1]:https://github.com/Amourspirit/AutoHotkey-Snippit/raw/master/Bin/Stable/Latest/AutoHotkeySnippitSetup.exe
 [2]:https://amourspirit.github.io/AutoHotkey-Snippit
 [3]:https://autohotkey.com
 [4]:https://github.com/Amourspirit/Mini-Framework
+[5]:https://amourspirit.github.io/AutoHotkey-Snippit/xsd_docs/

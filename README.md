@@ -4,10 +4,10 @@ AutoHotkey Snippit is a Program designed with the intention of having multiple t
 ##Installing AutoHotkey Snipit
 AutoHotkey Snippit can be installed via the [AutoHotkeySnippitSetup.exe][1] installer.
 ###Reqirements
-AutoHotkey Snippit requires .net framework, [AutoHotKey](https://autohotkey.com/) and [Mini-Framework]( https://github.com/Amourspirit/Mini-Framework){:target="_blank"}.  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
+AutoHotkey Snippit requires .net framework, [AutoHotKey][3] and [Mini-Framework][4].  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
 
 ####Getting Help
-Help can be founnd online <a href="https://amourspirit.github.io/AutoHotkey-Snippit/" target="_blank">here</a> as well AutoHotkey Snippit has a help file wihen it is installed.
+Help can be founnd online [here][2] as well AutoHotkey Snippit has a help file wihen it is installed.
 
 ###Sharing Snippits
 AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be exported and import via the Hotlist Application.
@@ -34,3 +34,6 @@ AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be 
 * Data can be included as Text or Binary 
 
 [1]:https://github.com/Amourspirit/AutoHotkey-Snippit/raw/master/Bin/Stable/Latest/AutoHotkeySnippitSetup.exe
+[2]:https://amourspirit.github.io/AutoHotkey-Snippit
+[3]:https://autohotkey.com
+[4]:https://github.com/Amourspirit/Mini-Framework

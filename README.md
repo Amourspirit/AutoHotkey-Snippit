@@ -4,7 +4,7 @@ AutoHotkey Snippit is a Program designed with the intention of having multiple t
 ##Installing AutoHotkey Snipit
 AutoHotkey Snippit can be installed via the [AutoHotkeySnippitSetup.exe][1] installer.
 ###Reqirements
-AutoHotkey Snippit requires .net framework, <a href="https://autohotkey.com/" target="_blank">AutoHotKey</a> and <a href="https://github.com/Amourspirit/Mini-Framework target="_blank">Mini-Framework</a>.  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
+AutoHotkey Snippit requires .net framework, [AutoHotKey](https://autohotkey.com/) and [Mini-Framework]( https://github.com/Amourspirit/Mini-Framework){:target="_blank"}.  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
 
 ####Getting Help
 Help can be founnd online <a href="https://amourspirit.github.io/AutoHotkey-Snippit/" target="_blank">here</a> as well AutoHotkey Snippit has a help file wihen it is installed.

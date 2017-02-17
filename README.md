@@ -20,13 +20,13 @@ AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be 
 Having a basic understanding of [AutoHotKey][3] is helpful but not necessary to get started. **AutoHotkey Snippit** comes with a few templates already installed. The Default profile when installed is *Windows Global.* Which include shortcuts to many of windows control panel items.  
 As well there is an auto correct plugin included with the *Windows Global* that auto corrects hundreds of spelling mistakes.
 
-The **AutoHotkey Snippit** application is the main launch point for the program and runs in the system tray ![Tray Icon][tray], see [Tray][7] in help section. If the **AutoHotkey Snipit** is not running in the system tray then no Hotkeys, Hotstring plugins willl be active. Althouth you may stil edit any profiles or plugin using the **Hotlist** application.
+The **AutoHotkey Snippit** application is the main launch point for the program and runs in the system tray ![Tray Icon][tray], see [Tray][7] in [help][2] section. If the **AutoHotkey Snipit** is not running in the system tray then no Hotkeys, Hotstring plugins willl be active. Althouth you may stil edit any profiles or plugin using the **Hotlist** application.
 
 **Plugins may contain three flavors.**
 
-* Hotkeys - These are Actions that are taken when a specified hot key is pressed such as Ctrl+Win+A , 
-* HotStrings - These are the Actions taken when a keyboard sequence is pressed such as sayhello and are often use to create text replacements for such things as auto correct.
-* Includes - These are custom Actions that can be anything supported by the AutoHotkey Scripting language including custom Hotkeys and HotStrings. Includes are more powerful but more difficult then working with Hotkeys and HotStrings. Most if not all of your need Hotkeys and HotStrings will probably do the job. 
+* [Hotkeys][8] - These are Actions that are taken when a specified hot key is pressed such as Ctrl+Win+A , 
+* [HotStrings][9] - These are the Actions taken when a keyboard sequence is pressed such as sayhello and are often use to create text replacements for such things as auto correct.
+* [Includes][10] - These are custom Actions that can be anything supported by the AutoHotkey Scripting language including custom Hotkeys and HotStrings. Includes are more powerful but more difficult then working with Hotkeys and HotStrings. Most if not all of your need Hotkeys and HotStrings will probably do the job. 
 
 **Some Features of AutoHotkey Snippit**
 
@@ -59,4 +59,7 @@ Having knowledge of or using he xsd/xml files is not required in any way. The Ho
 [5]:https://amourspirit.github.io/AutoHotkey-Snippit/xsd_docs/
 [6]:https://github.com/Amourspirit/AutoHotkey-Snippit-Editor
 [7]:https://amourspirit.github.io/AutoHotkey-Snippit/index.html?Tray.html
+[8]:https://amourspirit.github.io/AutoHotkey-Snippit/index.html?HotkeyPlugin.html
+[9]:https://amourspirit.github.io/AutoHotkey-Snippit/index.html?HotstringPlugin.html
+[10]:https://amourspirit.github.io/AutoHotkey-Snippit/index.html?IncludePlugin.html
 [tray]:https://amourspirit.github.io/AutoHotkey-Snippit/lib/Image_icon_tray.png "AutoHotkey Snippit Tray Icon"

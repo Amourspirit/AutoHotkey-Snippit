@@ -11,7 +11,7 @@ AutoHotkey Snippit can be installed via the [AutoHotkeySnippitSetup.exe][1] inst
 AutoHotkey Snippit requires .net framework, [AutoHotKey][3] and [Mini-Framework][4].  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
 
 ####Getting Help
-Help can be founnd online [here][2] as well AutoHotkey Snippit has a help file wihen it is installed.
+Help can be found online [here][2] as well AutoHotkey Snippit has a help file wihen it is installed.
 
 ###Sharing Snippits
 AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be exported and import via the Hotlist Application.
@@ -20,7 +20,7 @@ AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be 
 Having a basic understanding of [AutoHotKey][3] is helpful but not necessary to get started. **AutoHotkey Snippit** comes with a few templates already installed. The Default profile when installed is *Windows Global.* Which include shortcuts to many of windows control panel items.  
 As well there is an auto correct plugin included with the *Windows Global* that auto corrects hundreds of spelling mistakes.
 
-The **AutoHotkey Snippit** application is the main launch point for the program and runs in the system tray. If the **AutoHotkey Snipit** is not running in the system tray then no Hotkeys, Hotstring plugins willl be active. Althouth you may stil edit any profiles or plugin using the **Hotlist** application.
+The **AutoHotkey Snippit** application is the main launch point for the program and runs in the system tray ![Tray Icon][tray], see [Tray][7] in help section. If the **AutoHotkey Snipit** is not running in the system tray then no Hotkeys, Hotstring plugins willl be active. Althouth you may stil edit any profiles or plugin using the **Hotlist** application.
 
 **Plugins may contain three flavors.**
 
@@ -58,3 +58,5 @@ Having knowledge of or using he xsd/xml files is not required in any way. The Ho
 [4]:https://github.com/Amourspirit/Mini-Framework
 [5]:https://amourspirit.github.io/AutoHotkey-Snippit/xsd_docs/
 [6]:https://github.com/Amourspirit/AutoHotkey-Snippit-Editor
+[7]:https://amourspirit.github.io/AutoHotkey-Snippit/index.html?Tray.html
+[tray]:https://amourspirit.github.io/AutoHotkey-Snippit/lib/Image_icon_tray.png "AutoHotkey Snippit Tray Icon"

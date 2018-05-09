@@ -1,22 +1,22 @@
-#AutoHotkey Snippit
+# AutoHotkey Snippit
 AutoHotkey Snippit is a Program designed with the intention of having multiple types of Hotkeys, HotStrings and Include Plugins for use in windows Automation. 
 
 These Hotkeys, HotString and plugins are wrapped in Profiles
 
 These profiles can easily be swapped  and set to work any or selected windows. Profile can easily be swaped to have the same shortcut key or hotstring do a different job in different windows.
 
-##Installing AutoHotkey Snipit
+## Installing AutoHotkey Snipit
 AutoHotkey Snippit can be installed via the [AutoHotkeySnippitSetup.exe][1] installer.
 ###Reqirements
 AutoHotkey Snippit requires .net framework, [AutoHotKey][3] and [Mini-Framework][4].  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
 
-####Getting Help
+#### Getting Help
 Help can be found online [here][2] as well AutoHotkey Snippit has a help file wihen it is installed.
 
-###Sharing Snippits
+### Sharing Snippits
 AutoHotkey Snippit is designed with sharing of snippetsin mind. Snippets can be exported and import via the Hotlist Application.
 
-####Getting Started
+#### Getting Started
 Having a basic understanding of [AutoHotKey][3] is helpful but not necessary to get started. **AutoHotkey Snippit** comes with a few templates already installed. The Default profile when installed is *Windows Global.* Which include shortcuts to many of windows control panel items.  
 As well there is an auto correct plugin included with the *Windows Global* that auto corrects hundreds of spelling mistakes.
 
@@ -43,7 +43,7 @@ The **AutoHotkey Snippit** application is the main launch point for the program 
 * Data may be part of a plugin to enhance is capability. 
 * Data can be included as Text or Binary 
 
-###Related Project
+### Related Project
 **AutoHotkey Snippit Editor** is the editor written in c# for **AutoHhotkey Snippit**. The project files can be found [here][6]
 
 ___

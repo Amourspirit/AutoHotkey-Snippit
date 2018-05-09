@@ -5,7 +5,7 @@
 #define use_dotnetfx46
 
 #define MyAppName "AutoHotkey Snippit"
-#define MyAppVersion "0.7.3.0"
+#define MyAppVersion "0.8.0.0"
 #define MyAppPublisher "Paul Moss"
 #define MyAppURL "https://github.com/Amourspirit/AutoHotkey-Snippit"
 #define BaseAhk "\AutoHotkey\Scripts"
@@ -46,7 +46,7 @@ ArchitecturesInstallIn64BitMode=x64 ia64
 ; Note: We don't set ProcessorsAllowed because we want this
 ; installation to run on all architectures (including Itanium,
 ; since it's capable of running 32-bit code too).
-AppCopyright=Copyright (c) 2015, 2017 Paul Moss
+AppCopyright=Copyright (c) 2015, 2018 Paul Moss
 UninstallDisplayIcon={pf}\{#MyAppName}\icons\icon.ico
 
 [Languages]
@@ -290,7 +290,7 @@ begin
 #endif
 
 #ifdef use_miniframework
-  miniframework('0.3.8.0');
+  miniframework('0.4.0.0');
 #endif
 
 

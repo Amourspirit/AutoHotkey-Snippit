@@ -4,6 +4,7 @@
 const
 	miniframwork0200url = 'http://bigbytetech.ca/files/Software/mini-framwork/0200/MfSetup.exe';
   miniframwork03xurl = 'http://github.com/Amourspirit/Mini-Framework/raw/master/Latest/stable/0.3x/MfSetup.exe';
+  miniframwork04xurl = 'http://github.com/Amourspirit/Mini-Framework/raw/master/Latest/stable/0.4x/MfSetup.exe';
   mfsoftwarekey_reg = 'software\Mini-Framework\';
   type
     MfVersions = (v0200);

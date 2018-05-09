@@ -1,5 +1,5 @@
 ﻿;{ License
-/* Copyright (C) 2014-2017  Paul Moss
+/* Copyright (C) 2014-2018  Paul Moss
  * 
  * This file is part of AhkSnippy.
  *
@@ -18,6 +18,7 @@
 ; End:License ;}
 
 
+
 ;{ Directives
 #SingleInstance force
 #NoEnv
@@ -30,8 +31,8 @@
 #include *i %A_AppData%\AutoHotkey Snippit\endchars.ahk ; *i so the file can be non-existant
 ; End:Directives ;}
 ;{ Include
-#Include <inc_mf_0_3>
-#Include <inc_mf_System_IO_0_3>
+#Include <inc_mf_0_4>
+#Include <inc_mf_System_IO_0_4>
 #Include <Class_ErrorBoxResult>
 #Include <Inc_Debug>
 #Include <Inc_Script>

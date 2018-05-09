@@ -40,6 +40,11 @@ begin
           mf_url := miniframwork03xurl;
           mf_title := 'Mini-Framwork ' + Version;
       end;
+      if (sMajorMinor = '0.4') then
+      begin
+          mf_url := miniframwork04xurl;
+          mf_title := 'Mini-Framwork ' + Version;
+      end;
       mf_product := 'MfSetup.exe';
       AddProduct(
         mf_product,

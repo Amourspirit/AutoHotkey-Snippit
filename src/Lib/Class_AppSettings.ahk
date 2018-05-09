@@ -1,5 +1,5 @@
 ﻿;{ License
-/* Copyright (C) 2014-2017  Paul Moss
+/* Copyright (C) 2014-2018  Paul Moss
  * 
  * This file is part of AhkSnippy.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License 
  */
 ; End:License ;}
+
 
 
 ; AppSetting are the settings for the application state and such

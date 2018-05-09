@@ -7,7 +7,7 @@ These profiles can easily be swapped  and set to work any or selected windows. P
 
 ## Installing AutoHotkey Snipit
 AutoHotkey Snippit can be installed via the [AutoHotkeySnippitSetup.exe][1] installer.
-###Reqirements
+### Reqirements
 AutoHotkey Snippit requires .net framework, [AutoHotKey][3] and [Mini-Framework][4].  All of the requriements are automatically installed by the [AutoHotkeySnippitSetup.exe][1] installer as needed.
 
 #### Getting Help

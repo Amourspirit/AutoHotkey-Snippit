@@ -141,6 +141,7 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MainScriptFile}"; IconFilename:
 Name: "{group}\Hot List"; Filename: "{app}\bin\HotList.exe"
 Name: "{group}\Profile Swap"; Filename: "{app}\bin\ProfileSwap.exe"
 Name: "{group}\License"; Filename: "{app}\License.txt"
+Name: "{group}\Help"; Filename: "{app}\AutoHotkey Snippit.chm"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 
 [RUN]

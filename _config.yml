@@ -1,0 +1,5 @@
+# Handling Reading
+safe:                false
+include:             ["_keywords.json"]
+include:             ["_toc.json"]
+include:             ["_translations.js"]

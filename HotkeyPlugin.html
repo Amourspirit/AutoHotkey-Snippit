@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="generator" content="HelpNDoc Professional Edition 5.7.1.578">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.ico"/>
+
+  <title>Hotkey Plugin</title>
+  <meta name="description" content="Help for AutoHotkey Snippit" /> 
+  <meta name="keywords" content="Hotkey,Plugin">
+
+
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Hotkey Plugin">
+  <meta name="twitter:description" content="Help for AutoHotkey Snippit">
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="Hotkey Plugin" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Help for AutoHotkey Snippit" />
+  <meta property="og:site_name" content="AutoHotkey Snippit Help" /> 
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendors/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <link href="vendors/bootstrap-3.3.6/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+      <script src="vendors/html5shiv-3.7.2/html5shiv.min.js"></script>
+      <script src="vendors/respond-1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  <!-- JsTree styles -->
+  <link href="vendors/jstree-3.3.2/themes/default/style.min.css" rel="stylesheet"/>
+
+  <!-- Hnd styles -->
+  <link href="css/layout.min.css" rel="stylesheet" />
+  <link href="css/effects.min.css" rel="stylesheet" />
+  <link href="css/theme-light-blue.min.css" rel="stylesheet" />
+  <link href="css/print.min.css" rel="stylesheet" media="print" />
+  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+
+  <!-- Content style -->
+  <link href="css/hnd.content.css" rel="stylesheet" />
+
+  
+
+
+
+</head>
+
+<body class="md-nav-expanded">
+
+
+
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible">Skip to main content</a>
+  </div>
+
+  <header class="headroom">
+    <button class="hnd-toggle btn btn-default">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>        
+    </button>
+    <h1>AutoHotkey Snippit Help</h1>
+    
+  </header>
+
+  <nav class="md-nav-expanded">
+    <!-- Nav tabs -->
+    <ul class="tab-tabs nav nav-tabs" role="tablist">
+      <li id="nav-close"> 
+        <button class="hnd-toggle btn btn-default">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+      </li>
+      
+      
+        <li role="presentation" class="tab active">
+            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-list"></i>
+                Contents
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-asterisk"></i>
+                Index
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-search"></i>
+                Search
+            </a>
+        </li>
+      
+    </ul>  <!-- /Nav tabs -->
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      
+      <div role="tabpanel" class="tab-pane active" id="contents">
+        <div id="toc" class="tree-container unselectable"
+            data-url="_toc.json"
+            data-openlvl="0"
+        >
+            
+        </div>
+      </div>  <!-- /contents-->
+      
+      <div role="tabpanel" class="tab-pane" id="index">
+        <div id="keywords" class="tree-container unselectable"
+            data-url="_keywords.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /index-->
+      
+      <div role="tabpanel" class="tab-pane" id="search">
+        <div class="search-content">
+          <div class="search-input">
+            <form id="search-form">
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>  <!-- /search-input -->
+          <div class="search-result">
+            <div id="search-info"></div>
+            <div class="tree-container unselectable" id="search-tree"></div>
+          </div>  <!-- /search-result -->
+        </div>  <!-- /search-content -->
+      </div>  <!-- /search-->
+      
+    </div>  <!-- /Tab panes -->
+
+  </nav>
+
+  <div id="main">
+
+    <article>
+        <div id="topic-content" class="container-fluid" 
+          data-hnd-id="HotkeyPlugin"
+          data-hnd-context="12"
+          data-hnd-title="Hotkey Plugin"
+        >
+            
+                <div class="navigation">
+                    <ol class="breadcrumb">
+                        <li><a href="Gui.html">Gui</a></li><li><a href="Hotlist.html">Hotlist</a></li><li><a href="Plugin.html">Plugin</a></li>
+                    </ol>
+                    <div class="nav-arrows">
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Plugin.html" title="Plugin" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="InputFixedListDialog.html" title="Input Fixed List Dialog" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="New1.html" title="New" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                    </div>
+                </div> 
+            
+
+            <a id="main-content"></a>
+
+            <h2>Hotkey Plugin</h2>
+
+            <div class="main-content">
+                
+<p></p>
+<h1 class="rvps4"><span class="rvts0"><span class="rvts12">HotKey Plugin</span></span></h1>
+<p class="rvps2"><span class="rvts6">Hotkey plugin can be use to create triggers that run AutoHotkey script. </span><a class="rvts14" href="HotkeyPlugin.html#Figure1">Figure 1</a><span class="rvts6"> show an example of a hotkey for </span><span class="rvts15">ctrl+win+a</span><span class="rvts6"> that launches the Programs and Features</span><span class="rvts22"> ( add / remove)</span><span class="rvts6"> Control Panel window.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts6">Click on the various control of </span><a class="rvts14" href="HotkeyPlugin.html#Figure1">Figure 1</a><span class="rvts6"> to be taken to the description of the control.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><span class="rvts11"></span><br/><span class="rvts13">Figure 1</span><a name="Figure1"></a>
+<span class="rvts11">:</span></p>
+<p class="rvps2"><img alt="" style="padding : 1px;" src="lib/Map_Plugin_Hotkey.png" usemap="#69DC8F9979B04BEEA19D7CAF2EBE929F"><map name="69DC8F9979B04BEEA19D7CAF2EBE929F"><area shape="rect" coords="70,55,96,78" alt="First" title="First" href="NavigationRecordControl.html#nav_first"><area shape="rect" coords="97,55,122,78" alt="Previous" title="Previous" href="NavigationRecordControl.html#nav_prev"><area shape="rect" coords="126,54,213,77" alt="Go To" title="Go To" href="NavigationRecordControl.html#nav_textbox"><area shape="rect" coords="216,55,238,78" alt="Next" title="Next" href="NavigationRecordControl.html#nav_next"><area shape="rect" coords="239,55,266,78" alt="Last" title="Last" href="NavigationRecordControl.html#nav_last"><area shape="rect" coords="268,55,289,78" alt="Add New" title="Add New" href="NavigationRecordControl.html#nav_new"><area shape="rect" coords="292,54,311,78" alt="Delete" title="Delete" href="NavigationRecordControl.html#Nav Delete"><area shape="rect" coords="17,107,385,128" alt="Name" title="Name" href="HotkeyPlugin.html#name"><area shape="rect" coords="16,130,133,147" alt="Enabled" title="Enabled" href="HotkeyPlugin.html#enabled"><area shape="rect" coords="415,108,783,128" alt="Category" title="Category" href="HotkeyPlugin.html#category"><area shape="rect" coords="415,131,785,154" alt="Label" title="Label" href="HotkeyPlugin.html#label"><area shape="rect" coords="515,157,779,314" alt="Description" title="Description" href="HotkeyPlugin.html#description"><area shape="rect" coords="12,321,784,534" alt="Code" title="Code" href="HotkeyPlugin.html#code"><area shape="rect" coords="24,176,157,194" alt="Modifier Ctrl" title="Modifier Ctrl" href="HotkeyPlugin.html#hotkey_ctrl"><area shape="rect" coords="24,200,155,214" alt="Modifier Alt" title="Modifier Alt" href="HotkeyPlugin.html#hotkey_alt"><area shape="rect" coords="24,223,155,237" alt="Modifier Shift" title="Modifier Shift" href="HotkeyPlugin.html#hotkey_shift"><area shape="rect" coords="24,242,151,259" alt="" title="" href="HotkeyPlugin.html#hotkey_win"><area shape="rect" coords="255,179,471,194" alt="Left Modifier Only" title="Left Modifier Only" href="HotkeyPlugin.html#hotkey_mod_left"><area shape="rect" coords="254,200,471,215" alt="Right Modifier Only" title="Right Modifier Only" href="HotkeyPlugin.html#hotkey_mod_right"><area shape="rect" coords="254,223,472,237" alt="Wildcard" title="Wildcard" href="HotkeyPlugin.html#hotkey_wildcard"><area shape="rect" coords="254,245,471,258" alt="Send keys to active window" title="Send keys to active window" href="HotkeyPlugin.html#hotkey_send_to_active"><area shape="rect" coords="257,266,470,282" alt="Install Keyboard Hook" title="Install Keyboard Hook" href="HotkeyPlugin.html#hotkey_install_hook"><area shape="rect" coords="257,288,470,304" alt="Fire when released" title="Fire when released" href="HotkeyPlugin.html#hotkey_fire_when_released"><area shape="rect" coords="24,265,245,286" alt="Key 1" title="Key 1" href="HotkeyPlugin.html#hotkey_key1"><area shape="rect" coords="24,289,245,310" alt="Key 2" title="Key 2" href="HotkeyPlugin.html#hotkey_key2"><area shape="rect" coords="102,82,160,101" alt="HotStrings Tab" title="HotStrings Tab" href="HotstringPlugin.html"><area shape="rect" coords="163,81,213,103" alt="Includes" title="Includes" href="IncludePlugin.html"><area shape="rect" coords="11,83,48,100" alt="" title="" href="Plugin.html"><area shape="rect" coords="38,57,60,78" alt="" title="" href="Plugin.html#plugin_save"><area shape="rect" coords="14,54,32,75" alt="" title="" href="Plugin.html#plugin_exit"><area shape="rect" coords="212,83,251,102" alt="" title="" href="Data.html"><area shape="rect" coords="320,57,347,78" alt="Clone Object" title="Clone Object" href="CloneObject.html"></map></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><a name="name"></a>
+<span class="rvts21">Name</span><span class="rvts11">: is Required and is the name of the Hot Key as displayed in the Main List.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><a name="category"></a>
+<span class="rvts21">Category:</span><span class="rvts11"> is optional as is used in filtering the Main List.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><a name="enabled"></a>
+<span class="rvts21">Enabled</span><span class="rvts11">: If Check then the Hot Key will be Enable; Otherwise, the Hot Key will be disabled.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><a name="description"></a>
+<span class="rvts21">Description</span><span class="rvts11">: Is optional and is used to help describe what the Hot Key does.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><a name="label"></a>
+<span class="rvts21">Label</span><span class="rvts11">: Is required and this is the label that matches the Code Entry Label Point. The Label is not to end with a Colon (:) but in the code window the label must end with a colon as required by </span><span class="rvts33">AutoHotkey</span><span class="rvts11"> Labels.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><a name="code"></a>
+<span class="rvts21">Code</span><span class="rvts11">: This is the Code that does the work. When the Hotkey is fired this is the Code that runs to take action.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts21">Hotkey</span><span class="rvts11">: Hotkeys are made up from a combination of the following.</span></p>
+<p class="rvps12"><a name="hotkey_ctrl"></a>
+<span class="rvts21">Ctrl</span><span class="rvts11"> - Adds the </span><span class="rvts19">Control Modifier</span><span class="rvts11"> key to the hotkey</span></p>
+<p class="rvps12"><span class="rvts11"><br/></span></p>
+<p class="rvps12"><a name="hotkey_alt"></a>
+<span class="rvts21">Alt</span><span class="rvts11"> - Adds the </span><span class="rvts19">Alt Modifier</span><span class="rvts11"> key to the hotkey</span></p>
+<p class="rvps12"><span class="rvts11"><br/></span></p>
+<p class="rvps12"><a name="hotkey_shift"></a>
+<span class="rvts21">Shift</span><span class="rvts11"> - Adds the </span><span class="rvts19">Shift Modifier</span><span class="rvts11"> key to the hotkey</span></p>
+<p class="rvps12"><span class="rvts11"><br/></span></p>
+<p class="rvps12"><a name="hotkey_win"></a>
+<span class="rvts21">Win</span><span class="rvts11"> - Adds the Windows Modifier key to the hotkey</span></p>
+<p class="rvps12"><span class="rvts11"><br/></span></p>
+<p class="rvps12"><a name="hotkey_mod_left"></a>
+<span class="rvts21">Left Mod</span><span class="rvts11"> - Only fires hotkey when left modifier key(s) are pressed. Will not respond to right modifier keys</span></p>
+<p class="rvps12"><span class="rvts11"><br/></span></p>
+<p class="rvps12"><a name="hotkey_mod_right"></a>
+<span class="rvts19">Right Mod</span><span class="rvts6"> - Only fires hotkey when right modifier key(s) are pressed. Will not respond to right modifier keys</span></p>
+<p class="rvps12"><span class="rvts6"><br/></span></p>
+<p class="rvps12"><a name="hotkey_wildcard"></a>
+<span class="rvts19">Wildcard</span><span class="rvts6"> - Fire the hotkey even if extra modifiers are being held down.</span></p>
+<p class="rvps12"><span class="rvts6"><br/></span></p>
+<p class="rvps12"><a name="hotkey_send_to_active"></a>
+<span class="rvts19">Send Keys to the active window</span><span class="rvts6">. When the hotkey fires, its key's native function will not be blocked</span><span class="rvts49"> (hidden from the system)</span><span class="rvts6">. See the </span><span class="rvts50">~</span><span class="rvts6"> symbol in </span><a class="rvts52" href="https://autohotkey.com/docs/Hotkeys.htm#Tilde" target="_blank">AutoHotkey documentation</a><span class="rvts6"> for more information</span></p>
+<p class="rvps12"><span class="rvts6"><br/></span></p>
+<p class="rvps12"><a name="hotkey_install_hook"></a>
+<span class="rvts19">Install Hook</span><span class="rvts6"> - install keyboard hook and prevents key from calling itself. See the </span><span class="rvts50">$</span><span class="rvts6"> symbol in </span><a class="rvts52" href="https://autohotkey.com/docs/Hotkeys.htm#prefixdollar" target="_blank">AutoHotkey documentation</a><span class="rvts6"> for more information.</span></p>
+<p class="rvps12"><span class="rvts6"><br/></span></p>
+<p class="rvps12"><a name="hotkey_fire_when_released"></a>
+<span class="rvts19">Fire When key released</span><span class="rvts6"> will not fire the hotkey until the key is released.</span></p>
+<p class="rvps12"><span class="rvts6"><br/></span></p>
+<p class="rvps12"><a name="hotkey_key1"></a>
+<span class="rvts19">Key 1</span><span class="rvts6"> - The main key for the hotkey. Key 1 is always required for a valid hotkey.</span></p>
+<p class="rvps12"><span class="rvts6"><br/></span></p>
+<p class="rvps12"><a name="hotkey_key2"></a>
+<span class="rvts19">Key 2</span><span class="rvts6"> - The optional second key for the hotkey. For instance you may have a hotkey such as </span><span class="rvts50">a+b</span><span class="rvts6"> that would not trigger until both a and b keys are pressed. Or you may use a key combination with modifier such as </span><span class="rvts50">ctrl+win+a+b</span><span class="rvts6"> which would be triggered when </span><span class="rvts19">ctrl+win+a</span><span class="rvts6"> are pressed and released followed by </span><span class="rvts19">b</span><span class="rvts6">.</span></p>
+<p class="rvps12"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><a name="Modifer_key_desc"></a>
+<span class="rvts11">Modifier keys are keys such as </span><span class="rvts33">ctrl</span><span class="rvts11"> </span><span class="rvts22">(control)</span><span class="rvts11">, </span><span class="rvts33">alt</span><span class="rvts11">, </span><span class="rvts33">shift</span><span class="rvts11"> and </span><span class="rvts33">win</span><span class="rvts11"> </span><span class="rvts22">(windows)</span><span class="rvts11"> keys.</span></p>
+<h3 class="rvps7"><span class="rvts0"><span class="rvts24">Remarks</span></span></h3>
+<p class="rvps2"><span class="rvts21">Key 2</span><span class="rvts11"> is not required to create a hotkey.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">If </span><span class="rvts21">Key 1</span><span class="rvts11"> and </span><span class="rvts21">Key 2</span><span class="rvts11"> are used with any modifier keys then the hotkey will work differently then if key 1 and key 2 are used with no modifiers.</span></p>
+<p class="rvps2"><span class="rvts11">Without modifiers </span><span class="rvts21">Key 1</span><span class="rvts11"> and </span><span class="rvts21">Key 2</span><span class="rvts11"> must be pressed together to be triggered.</span></p>
+<p class="rvps2"><span class="rvts11">With modifiers you must press and release the modifiers keys with </span><span class="rvts21">key 1</span><span class="rvts11"> then press </span><span class="rvts21">key 2</span><span class="rvts11"> alone to activate the trigger.</span></p>
+<p class="rvps2"><span class="rvts11"></span><br/><span class="rvts11">The </span><span class="rvts21">Code</span><span class="rvts11"> may contain other labels and Methods. Basically any code that is acceptable in AutoHotkey including Classes.</span><br/><span class="rvts11">AutoHotkey Snippit is built upon Mini-Framework, this means your code can call any class from the Mini-Framework as well.</span><br/><span class="rvts11"></span><br/><span class="rvts11">The Form is self Validating. If all the proper fields are not filled out then the form will not allow save. The Code in the edit box will not be validated other then the form validates that it exist. Writing bad code here may cause problems in AutoHotkey Snippit.</span><br/><span class="rvts21">Be Careful </span><span class="rvts11">with the code your write or accept.</span><br/><span class="rvts11"><br/></span></p>
+
+            </div>
+            
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2014 - 2018 by Paul Moss. All Rights Reserved.</div></div>
+        </div>  <!-- /#topic-content -->
+    </article>
+
+    <footer></footer>
+
+  </div>  <!-- /#main -->
+
+  <div class="mask" data-toggle="sm-nav-expanded"></div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="hndModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="vendors/jquery-1.11.3/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+  <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
+  <script src="vendors/markjs-8.8.3/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.18.9/uri.min.js"></script>
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <script src="vendors/bootstrap-3.3.6/js/ie10-viewport-bug-workaround.js"></script>
+  
+  <!-- Headroom -->
+  <script src="vendors/headroom-0.9.3/headroom.min.js"></script>
+  <script src="vendors/headroom-0.9.3/jquery.headroom.min.js"></script>
+
+  <!-- JsTree -->
+  <script src="vendors/jstree-3.3.2/jstree.min.js"></script>
+
+  <!-- HelpNDoc scripts -->
+  <script src="_translations.js"></script>
+  <script src="js/hndsd.min.js"></script>
+  <script src="js/hndse.min.js"></script>
+  <script src="js/app.min.js"></script>
+
+  <!-- Scripts -->
+  <script>
+    $(function() {
+      // Instanciate FastClick
+      Origami.fastclick(document.body);
+      // Create the app
+      var app = new Hnd.App();
+      // Update translations
+      hnd_ut(app);
+      // Custom JS
+      
+      // Boot the app
+      app.Boot();
+    });
+  </script>
+
+
+
+</body>
+
+</html>
+

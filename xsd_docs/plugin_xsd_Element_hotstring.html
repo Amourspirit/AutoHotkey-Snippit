@@ -1,0 +1,1241 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Schema documentation for component hotstring</title>
+      <link rel="stylesheet" href="docHtml.css" type="text/css" /><script type="text/javascript">
+         <!--
+        var propertiesBoxes= new Array('properties_hotstring', 
+				'properties_hotstring_type', 
+				'properties_hotstring_hotStringOptions', 
+				'properties_hotstring_hotstring_hotStringOptions_hotStringOption', 
+				'properties_hotstring_trigger', 
+				'properties_hotstring_enabled');
+var facetsBoxes= new Array('facets_hotstring_type', 
+				'facets_hotstring_hotstring_hotStringOptions_hotStringOption');
+var usedByBoxes= new Array('usedBy_hotstring', 
+				'usedBy_hotstring_trigger', 
+				'usedBy_hotstring_enabled');
+var sourceBoxes= new Array('source_hotstring', 
+				'source_hotstring_type', 
+				'source_hotstring_hotStringOptions', 
+				'source_hotstring_hotstring_hotStringOptions_hotStringOption', 
+				'source_hotstring_trigger', 
+				'source_hotstring_enabled');
+var instanceBoxes= new Array('instance_hotstring', 
+				'instance_hotstring_hotStringOptions');
+var diagramBoxes= new Array('diagram_hotstring', 
+				'diagram_hotstring_type', 
+				'diagram_hotstring_hotStringOptions', 
+				'diagram_hotstring_hotstring_hotStringOptions_hotStringOption');
+var annotationBoxes= new Array('annotations_hotstring_type', 
+				'annotations_hotstring_trigger', 
+				'annotations_hotstring_enabled');
+var attributesBoxes= new Array('attributes_hotstring');
+var identityConstraintsBoxes= new Array('identityConstraints_hotstring_hotStringOptions');
+var modelBoxes= new Array('model_hotstring', 
+				'model_hotstring_hotStringOptions');
+
+      
+        var button_prefix = 'button_';
+        
+        /**
+        * Returns an element in the current HTML document.
+        *
+        * @param elementID Identifier of HTML element
+        * @return               HTML element object
+        */
+        function getElementObject(elementID) {
+            var elemObj = null;
+            if (document.getElementById) {
+                elemObj = document.getElementById(elementID);
+            }
+            return elemObj;
+        }
+        
+        /**
+        * Switches the state of a collapseable box, e.g.
+        * if it's opened, it'll be closed, and vice versa.
+        *
+        * @param boxID Identifier of box
+        */
+        function switchState(boxID) {
+            var boxObj = getElementObject(boxID);
+            var buttonObj = getElementObject(button_prefix + boxID);
+            if (boxObj == null || buttonObj == null) {
+                // Box or button not found
+            } else if (boxObj.style.display == "none") {
+                // Box is closed, so open it
+                openBox(boxObj, buttonObj);
+            } else if (boxObj.style.display == "block") {
+                // Box is opened, so close it
+                closeBox(boxObj, buttonObj);
+            }
+        }
+        
+        /**
+        * Opens a collapseable box.
+        *
+        * @param boxObj       Collapseable box
+        * @param buttonObj Button controlling box
+        */
+        function openBox(boxObj, buttonObj) {
+            if (boxObj == null || buttonObj == null) {
+                // Box or button not found
+            } else {
+                // Change 'display' CSS property of box
+                boxObj.style.display = "block";
+                
+                // Change text of button
+                if (boxObj.style.display == "block") {
+                    buttonObj.src = "img/btM.gif";
+                }
+            }
+        }
+        
+        /**
+        * Closes a collapseable box.
+        *
+        * @param boxObj       Collapseable box
+        * @param buttonObj Button controlling box
+        */
+        function closeBox(boxObj, buttonObj) {
+            if (boxObj == null || buttonObj == null) {
+                // Box or button not found
+            } else {
+                // Change 'display' CSS property of box
+                boxObj.style.display = "none";
+                
+                // Change text of button
+                if (boxObj.style.display == "none") {
+                    buttonObj.src = "img/btP.gif";
+                }
+            }
+        }
+    
+       function switchStateForAll(buttonObj, boxList) {
+            if (buttonObj == null) {
+                // button not found
+            } else if (buttonObj.value == "+") {
+                // Expand all
+                expandAll(boxList);
+                buttonObj.value = "-";
+            } else if (buttonObj.value == "-") {
+                // Collapse all
+                collapseAll(boxList);
+                buttonObj.value = "+";
+            }
+        }
+        
+        /**
+        * Closes all boxes in a given list.
+        *
+        * @param boxList Array of box IDs
+        */
+        function collapseAll(boxList) {
+            var idx;
+            for (idx = 0; idx < boxList.length; idx++) {
+                var boxObj = getElementObject(boxList[idx]);
+                var buttonObj = getElementObject(button_prefix + boxList[idx]);
+                closeBox(boxObj, buttonObj);
+            }
+        }
+            
+        /**
+        * Open all boxes in a given list.
+        *
+        * @param boxList Array of box IDs
+        */
+        function expandAll(boxList) {
+            var idx;
+            for (idx = 0; idx < boxList.length; idx++) {
+                var boxObj = getElementObject(boxList[idx]);
+                var buttonObj = getElementObject(button_prefix + boxList[idx]);
+                openBox(boxObj, buttonObj);
+            }
+        }
+        
+        /**
+         * Update the message presented in the title of the html page.
+         * - If the documentation was splited by namespace we present something like: "Documentation for namespace 'ns'"
+         * - If the documentation was splited by location we present somehing like: "Documentation for 'Schema.xsd'"
+         * - If no split we always present: "Documentation for 'MainSchema.xsd'"
+         */
+        function updatePageTitle(message) {
+            top.document.title = message;
+        }
+        
+          
+                    
+         /**
+          * Finds an HTML element by its ID and makes it floatable over the normal content.
+          *
+          * @param x_displacement The difference in pixels to the right side of the window from 
+          *           the left side of the element.
+          * @param y_displacement The difference in pixels to the right side of the window from 
+          *           the top of the element.          
+          */
+         function findAndFloat(id, x_displacement, y_displacement){
+
+            var element = getElementObject(id);            
+            
+            window[id + "_obj"] = element;
+            
+            if(document.layers) {
+               element.style = element;
+            }
+            
+            element.current_y = y_displacement;      
+            element.first_time = true;
+         
+            element.floatElement = function(){
+               // It may be closed by an user action.
+                
+               // Target X and Y coordinates.
+               var x, y;
+               
+               var myWidth = 0, myHeight = 0;
+               if( typeof( window.innerWidth ) == 'number' ) {
+                  //Non-IE
+                  myWidth = window.innerWidth;
+                  myHeight = window.innerHeight;
+               } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+                  //IE 6+ in 'standards compliant mode'
+                  myWidth = document.documentElement.clientWidth;
+                  myHeight = document.documentElement.clientHeight;
+               } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+                  //IE 4 compatible
+                  myWidth = document.body.clientWidth;
+                  myHeight = document.body.clientHeight;
+               }
+               
+               
+               x = myWidth - x_displacement;
+               
+               var ns = (navigator.appName.indexOf("Netscape") != -1);               
+               y = ns ? pageYOffset : document.documentElement && document.documentElement.scrollTop ? 
+                  document.documentElement.scrollTop : document.body.scrollTop;               
+               y = y + y_displacement;               
+               
+               // The current y is the current coordinate of the floating element.
+               // This should be at the limit the y target coordinate.
+               this.current_y += (y - this.current_y)/1.25;
+               
+               // Add the pixels constant after the values
+               // and move the element.
+               var px = document.layers ? "" : "px";
+               this.style.left =  x + px;
+               this.style.top =  this.current_y + px;
+                              
+               setTimeout(this.id + "_obj.floatElement()", 100);
+            }
+            
+            element.floatElement();
+            return element;
+          }
+
+         /**
+          * Finds an HTML element by its ID and makes it floatable over the normal content.
+          *
+          * @param x_displacement The difference in pixels to the right side of the window from 
+          *           the left side of the element.
+          * @param y_displacement The difference in pixels to the right side of the window from 
+          *           the top of the element.          
+          */
+         function selectTOCGroupBy(id, isChunked, indexFileLocation, indexFileNamespace, indexFileComponent){
+
+            if (!isChunked) {
+             var selectIds = new Array('toc_group_by_namespace', 'toc_group_by_location', 'toc_group_by_component_type');
+             // Make all the tabs invisible.
+               for (i = 0; i < 3; i++){
+                  var tab = getElementObject(selectIds[i]);
+                  tab.style.display = 'none';
+               }
+               var selTab = getElementObject(id);
+               selTab.style.display = 'block';
+            } else {
+             if (id == 'toc_group_by_namespace') {
+               parent.indexFrame.location = indexFileNamespace;
+             } else  if (id == 'toc_group_by_location') {
+               parent.indexFrame.location = indexFileLocation;
+             } else  if (id == 'toc_group_by_component_type') {
+              parent.indexFrame.location = indexFileComponent;
+             }
+            }
+         }
+          
+
+    
+                    //--></script></head>
+   <body>
+      <div id="global_controls" class="globalControls" style="position:absolute;right:0;">
+         <table class="rt">
+            <tr>
+               <td class="rt_cornerTopLeft"></td>
+               <td class="rt_lineTop"></td>
+               <td class="rt_cornerTopRight"></td>
+            </tr>
+            <tr>
+               <td class="rt_lineLeft"></td>
+               <td class="rt_content">
+                  <h3>Showing:</h3>
+                  <table>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, annotationBoxes);" class="control" /></span><span class="globalControlName">Annotations</span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, attributesBoxes);" class="control" /></span><span class="globalControlName">Attributes </span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, diagramBoxes);" class="control" /></span><span class="globalControlName">Diagrams</span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, facetsBoxes);" class="control" /></span><span class="globalControlName">Facets </span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, identityConstraintsBoxes);" class="control" /></span><span class="globalControlName">Identity Constraints</span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, instanceBoxes);" class="control" /></span><span class="globalControlName">Instances</span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, modelBoxes);" class="control" /></span><span class="globalControlName">Model </span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, propertiesBoxes);" class="control" /></span><span class="globalControlName">Properties </span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, sourceBoxes);" class="control" /></span><span class="globalControlName">Source</span></td>
+                     </tr>
+                     <tr>
+                        <td><span><input type="checkbox" value="-" checked="checked" onclick="switchStateForAll(this, usedByBoxes);" class="control" /></span><span class="globalControlName">Used by </span></td>
+                     </tr>
+                  </table>
+                  <div align="right"><span><input type="button" onclick="getElementObject('global_controls').style.display = 'none';" value="Close" /></span></div>
+               </td>
+               <td class="rt_lineRight"></td>
+            </tr>
+            <tr>
+               <td class="rt_cornerBottomLeft"></td>
+               <td class="rt_lineBottom"></td>
+               <td class="rt_cornerBottomRight"></td>
+            </tr>
+         </table>
+      </div><a id="hotstring"></a><div class="componentTitle">Element <span class="qname">hotstring</span></div>
+      <table class="rt">
+         <tr>
+            <td class="rt_cornerTopLeft"></td>
+            <td class="rt_lineTop"></td>
+            <td class="rt_cornerTopRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_lineLeft"></td>
+            <td class="rt_content">
+               <table class="component">
+                  <tbody>
+                     <tr>
+                        <td class="firstColumn"><b>Namespace</b></td>
+                        <td>No namespace</td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Diagram</b></div>
+                           <div class="floatRight"><input id="button_diagram_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('diagram_hotstring');" class="control" /></div>
+                        </td>
+                        <td class="diagram">
+                           <div id="diagram_hotstring" style="display:block"><img alt="Diagram" border="0" src="img/plugin_xsd_Element_hotstring_1.jpeg" usemap="#plugin_xsd_Element_hotstring_1" /><map name="plugin_xsd_Element_hotstring_1" id="plugin_xsd_Element_hotstring_1">
+                                 <area alt="plugin_xsd_Element_hotstring.tmp#hotstring_trigger" href="plugin_xsd_Element_hotstring.html#hotstring_trigger" coords="115,41,196,66" />
+                                 <area alt="plugin_xsd_Element_hotstring.tmp#hotstring_enabled" href="plugin_xsd_Element_hotstring.html#hotstring_enabled" coords="115,135,203,160" />
+                                 <area alt="plugin_xsd_Element_name.tmp#name" href="plugin_xsd_Element_name.html#name" coords="172,222,229,247" />
+                                 <area alt="plugin_xsd_Element_description.tmp#description" href="plugin_xsd_Element_description.html#description" coords="172,288,256,313" />
+                                 <area alt="plugin_xsd_Element_category.tmp#category" href="plugin_xsd_Element_category.html#category" coords="172,354,246,379" />
+                                 <area alt="plugin_xsd_Element_forceclear.tmp#forceclear" href="plugin_xsd_Element_forceclear.html#forceclear" coords="172,434,253,459" />
+                                 <area alt="plugin_xsd_Element_snippit.tmp#snippit" href="plugin_xsd_Element_snippit.html#snippit" coords="172,514,234,539" />
+                                 <area alt="plugin_xsd_Element_tabify.tmp#tabify" href="plugin_xsd_Element_tabify.html#tabify" coords="172,608,230,633" />
+                                 <area alt="plugin_xsd_Element_sendkeys.tmp#sendkeys" href="plugin_xsd_Element_sendkeys.html#sendkeys" coords="172,688,250,713" />
+                                 <area alt="plugin_xsd_Element_hotstring.tmp#hotstring_type" href="plugin_xsd_Element_hotstring.html#hotstring_type" coords="172,782,224,807" />
+                                 <area alt="plugin_xsd_Element_code.tmp#code" href="plugin_xsd_Element_code.html#code" coords="172,876,227,901" />
+                                 <area alt="plugin_xsd_Element_replacements.tmp#replacements" href="plugin_xsd_Element_replacements.html#replacements" coords="172,956,268,981" />
+                                 <area alt="plugin_xsd_Element_hotstring.tmp#hotstring_hotStringOptions" href="plugin_xsd_Element_hotstring.html#hotstring_hotStringOptions" coords="172,1036,283,1061" /></map></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Properties</b></div>
+                           <div class="floatRight"><input id="button_properties_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('properties_hotstring');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="properties_hotstring" style="display:block">
+                              <table class="propertiesTable">
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">content</td>
+                                    <td><b>complex</b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Used by</b></div>
+                           <div class="floatRight"><input id="button_usedBy_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('usedBy_hotstring');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="usedBy_hotstring" style="display:block">
+                              <table class="usedByTable">
+                                 <tr>
+                                    <td class="firstColumn">Element </td>
+                                    <td><b><a href="plugin_xsd_Element_hotstrings.html#hotstrings" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstrings')">hotstrings</a></b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Model</b><div class="floatRight"><input id="button_model_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('model_hotstring');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="model_hotstring" style="display:block"><b><a href="plugin_xsd_Element_name.html#name" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component name')">name</a></b> , <b><a href="plugin_xsd_Element_description.html#description" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component description')">description</a></b> , <b><a href="plugin_xsd_Element_category.html#category" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component category{0,1}')">category{0,1}</a></b> , <b><a href="plugin_xsd_Element_forceclear.html#forceclear" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component forceclear')">forceclear</a></b> , <b><a href="plugin_xsd_Element_snippit.html#snippit" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component snippit{0,1}')">snippit{0,1}</a></b> , <b><a href="plugin_xsd_Element_tabify.html#tabify" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component tabify{0,1}')">tabify{0,1}</a></b> , <b><a href="plugin_xsd_Element_sendkeys.html#sendkeys" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component sendkeys{0,1}')">sendkeys{0,1}</a></b> , <b><a href="plugin_xsd_Element_hotstring.html#hotstring_type" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component type{0,1}')">type{0,1}</a></b> , <b><a href="plugin_xsd_Element_code.html#code" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component code')">code</a></b> , <b><a href="plugin_xsd_Element_replacements.html#replacements" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component replacements{0,1}')">replacements{0,1}</a></b> , <b><a href="plugin_xsd_Element_hotstring.html#hotstring_hotStringOptions" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotStringOptions{0,1}')">hotStringOptions{0,1}</a></b></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Children</b></td>
+                        <td><b><a href="plugin_xsd_Element_category.html#category" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component category')">category</a></b>, <b><a href="plugin_xsd_Element_code.html#code" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component code')">code</a></b>, <b><a href="plugin_xsd_Element_description.html#description" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component description')">description</a></b>, <b><a href="plugin_xsd_Element_forceclear.html#forceclear" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component forceclear')">forceclear</a></b>, <b><a href="plugin_xsd_Element_hotstring.html#hotstring_hotStringOptions" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotStringOptions')">hotStringOptions</a></b>, <b><a href="plugin_xsd_Element_name.html#name" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component name')">name</a></b>, <b><a href="plugin_xsd_Element_replacements.html#replacements" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component replacements')">replacements</a></b>, <b><a href="plugin_xsd_Element_sendkeys.html#sendkeys" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component sendkeys')">sendkeys</a></b>, <b><a href="plugin_xsd_Element_snippit.html#snippit" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component snippit')">snippit</a></b>, <b><a href="plugin_xsd_Element_tabify.html#tabify" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component tabify')">tabify</a></b>, <b><a href="plugin_xsd_Element_hotstring.html#hotstring_type" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component type')">type</a></b></td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Instance</b></div>
+                           <div class="floatRight"><input id="button_instance_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('instance_hotstring');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="instance_hotstring" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;hotstring</span><span class="tT"> </span><span class="tAN">enabled=</span><span class="tAV">"true"</span><span class="tT"> </span><span class="tAN">trigger=</span><span class="tAV">""</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;name</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{1,1}</span><span class="tEl">&lt;/name&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;description</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{1,1}</span><span class="tEl">&lt;/description&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;category</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/category&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;forceclear</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{1,1}</span><span class="tEl">&lt;/forceclear&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;snippit</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/snippit&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;tabify</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/tabify&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;sendkeys</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/sendkeys&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;type</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/type&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;code</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{1,1}</span><span class="tEl">&lt;/code&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;replacements</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/replacements&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;hotStringOptions</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,1}</span><span class="tEl">&lt;/hotStringOptions&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/hotstring&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Attributes</b></div>
+                           <div class="floatRight"><input id="button_attributes_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('attributes_hotstring');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="attributes_hotstring" style="display:block">
+                              <table class="attributesTable">
+                                 <thead>
+                                    <tr>
+                                       <th>QName</th>
+                                       <th width="10%">Type</th>
+                                       <th width="10%">Default</th>
+                                       <th width="5%">Use</th>
+                                       <th>Annotation</th>
+                                    </tr>
+                                 </thead>
+                                 <tr>
+                                    <td class="firstColumn"><b><a href="plugin_xsd_Element_hotstring.html#hotstring_enabled" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component enabled')">enabled</a></b></td>
+                                    <td><b>xs:boolean</b></td>
+                                    <td>true</td>
+                                    <td>optional</td>
+                                    <td>
+                                       <div class="annotation">
+                                          <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                             <tr>
+                                                <td width="100%"><pre><span class="tT">The State of the Hotstring (enabled or disabled). If disabled then this</span><span class="tI">
+</span><span class="tT">hotstring will be ignored for a match.</span></pre></td>
+                                             </tr>
+                                          </table>
+                                       </div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn"><b><a href="plugin_xsd_Element_hotstring.html#hotstring_trigger" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component trigger')">trigger</a></b></td>
+                                    <td><b>xs:string</b></td>
+                                    <td></td>
+                                    <td>required</td>
+                                    <td>
+                                       <div class="annotation">
+                                          <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                             <tr>
+                                                <td width="100%"><pre><span class="tT">The sequence of typed keys that triggers the hotstring. This must be in</span><span class="tI">
+</span><span class="tT">a format that would be accepted by AutoHotkey. Eg:hw</span></pre></td>
+                                             </tr>
+                                          </table>
+                                       </div>
+                                    </td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Source</b></div>
+                           <div class="floatRight"><input id="button_source_hotstring" type="image" src="img/btM.gif" value="-" onclick="switchState('source_hotstring');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="source_hotstring" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;xs:element</span><span class="tAN"> name=</span><span class="tAV">"hotstring"</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;xs:complexType</span><span class="tEl">&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:sequence</span><span class="tEl">&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"name"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The Name of the Hotstring for Display</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"description"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The Description of the Hotstring</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"category"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The Category of the Hotstring. Used to group and filter list of hotstrings.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"forceclear"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">If true then an attempt will be made to clear all the text in the line before the hotstring was typed.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"snippit"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">Snippit will only apply if the type is set to snipFile. Snippit for Hotstring is the name of the Code file the represents your code. This file will be read when the hotstring is matched. The name has to be a valid file name. The file name is not requrired to have a file ext as .snippit will be appended to the end of the file name if it is absent. It is Recommended the Snippit Name be unique to this plugin. A good idea might be to append the plugin name in front of your filename. For instance if your Plugin name is Hellos from the world and your snippit Name is Hello World then a good snippit name would be hellos_from_the_world_hello_world Having unique snippit name will ensure that other plugins in the same profile will not have any name issues.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"tabify"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">If True then a attemp will be made to preserve tabs before the hotstring was typed.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"sendkeys"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The keys to send after the hotstring replacement has been inserted. These keys must be in a key formate supported by AutoHotkey Send. Example: {up 2}{left}{up}</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> default=</span><span class="tAV">"Paste"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"type"</span><span class="tAN"> type=</span><span class="tAV">"hotstringType"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The type of hotstring such as inline If the hotstrig is of type inline then no snippit file is used or required. This is the recommended way to run hotstrings. If the hotstring is of type snippitFile the the contents of the code will will be written to the snnippit file and the App will read from the snippit file when there is a match.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"code"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The text to replace the hotstring match. eg:Hello World</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> ref=</span><span class="tAV">"replacements"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">Replacement Data to insert into the hotstring replacement.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"hotStringOptions"</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:complexType</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:sequence</span><span class="tEl">&gt;</span><span class="tI">
+            </span><span class="tEl">&lt;xs:element</span><span class="tAN"> maxOccurs=</span><span class="tAV">"unbounded"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"hotStringOption"</span><span class="tAN"> type=</span><span class="tAV">"HotStringOptionsEnum"</span><span class="tEl">/&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;/xs:sequence&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:complexType&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:unique</span><span class="tAN"> name=</span><span class="tAV">"hotStringOption_unique"</span><span class="tEl">&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:selector</span><span class="tAN"> xpath=</span><span class="tAV">"hotStringOption"</span><span class="tEl">/&gt;</span><span class="tI">
+          </span><span class="tEl">&lt;xs:field</span><span class="tAN"> xpath=</span><span class="tAV">"."</span><span class="tEl">/&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;/xs:unique&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:element&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;/xs:sequence&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:attribute</span><span class="tAN"> name=</span><span class="tAV">"trigger"</span><span class="tAN"> use=</span><span class="tAV">"required"</span><span class="tAN"> type=</span><span class="tAV">"xs:string"</span><span class="tEl">&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The sequence of typed keys that triggers the hotstring. This must be in a format that would be accepted by AutoHotkey. Eg:hw</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;/xs:attribute&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:attribute</span><span class="tAN"> default=</span><span class="tAV">"true"</span><span class="tAN"> name=</span><span class="tAV">"enabled"</span><span class="tAN"> type=</span><span class="tAV">"xs:boolean"</span><span class="tEl">&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+        </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The State of the Hotstring (enabled or disabled). If disabled then this hotstring will be ignored for a match.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;/xs:attribute&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;/xs:complexType&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/xs:element&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </td>
+            <td class="rt_lineRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_cornerBottomLeft"></td>
+            <td class="rt_lineBottom"></td>
+            <td class="rt_cornerBottomRight"></td>
+         </tr>
+      </table><a id="hotstring_type"></a><div class="componentTitle">Element <span class="qname"><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b> / type</span></div>
+      <table class="rt">
+         <tr>
+            <td class="rt_cornerTopLeft"></td>
+            <td class="rt_lineTop"></td>
+            <td class="rt_cornerTopRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_lineLeft"></td>
+            <td class="rt_content">
+               <table class="component">
+                  <tbody>
+                     <tr>
+                        <td class="firstColumn"><b>Namespace</b></td>
+                        <td>No namespace</td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Annotations</b></div>
+                           <div class="floatRight"><input id="button_annotations_hotstring_type" type="image" src="img/btM.gif" value="-" onclick="switchState('annotations_hotstring_type');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="annotations_hotstring_type" style="display:block">
+                              <div class="annotation">
+                                 <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                    <tr>
+                                       <td width="100%"><pre><span class="tT">The type of hotstring such as inline If the hotstrig is of type inline</span><span class="tI">
+</span><span class="tT">then no snippit file is used or required. This is the recommended way to run</span><span class="tI">
+</span><span class="tT">hotstrings. If the hotstring is of type snippitFile the the contents of the code will</span><span class="tI">
+</span><span class="tT">will be written to the snnippit file and the App will read from the snippit file when</span><span class="tI">
+</span><span class="tT">there is a match.</span></pre></td>
+                                    </tr>
+                                 </table>
+                              </div>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Diagram</b></div>
+                           <div class="floatRight"><input id="button_diagram_hotstring_type" type="image" src="img/btM.gif" value="-" onclick="switchState('diagram_hotstring_type');" class="control" /></div>
+                        </td>
+                        <td class="diagram">
+                           <div id="diagram_hotstring_type" style="display:block"><img alt="Diagram" border="0" src="img/plugin_xsd_Element_type.jpeg" usemap="#plugin_xsd_Element_type" /><map name="plugin_xsd_Element_type" id="plugin_xsd_Element_type">
+                                 <area alt="plugin_xsd_Simple_Type_hotstringType.tmp#hotstringType" href="plugin_xsd_Simple_Type_hotstringType.html#hotstringType" coords="100,0,221,26" /></map></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Type</b></td>
+                        <td><b><a href="plugin_xsd_Simple_Type_hotstringType.html#hotstringType" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstringType')">hotstringType</a></b></td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Properties</b></div>
+                           <div class="floatRight"><input id="button_properties_hotstring_type" type="image" src="img/btM.gif" value="-" onclick="switchState('properties_hotstring_type');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="properties_hotstring_type" style="display:block">
+                              <table class="propertiesTable">
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">content</td>
+                                    <td><b>simple</b></td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">minOccurs</td>
+                                    <td><b>0</b></td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">default</td>
+                                    <td><b>Paste</b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Facets</b></div>
+                           <div class="floatRight"><input id="button_facets_hotstring_type" type="image" src="img/btM.gif" value="-" onclick="switchState('facets_hotstring_type');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="facets_hotstring_type" style="display:block">
+                              <table class="facetsTable">
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>UnKnown</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>Paste</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>Inline</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>Code</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Source</b></div>
+                           <div class="floatRight"><input id="button_source_hotstring_type" type="image" src="img/btM.gif" value="-" onclick="switchState('source_hotstring_type');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="source_hotstring_type" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;xs:element</span><span class="tAN"> default=</span><span class="tAV">"Paste"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"type"</span><span class="tAN"> type=</span><span class="tAV">"hotstringType"</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The type of hotstring such as inline If the hotstrig is of type inline then no snippit file is used or required. This is the recommended way to run hotstrings. If the hotstring is of type snippitFile the the contents of the code will will be written to the snnippit file and the App will read from the snippit file when there is a match.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/xs:element&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </td>
+            <td class="rt_lineRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_cornerBottomLeft"></td>
+            <td class="rt_lineBottom"></td>
+            <td class="rt_cornerBottomRight"></td>
+         </tr>
+      </table><a id="hotstring_hotStringOptions"></a><div class="componentTitle">Element <span class="qname"><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b> / hotStringOptions</span></div>
+      <table class="rt">
+         <tr>
+            <td class="rt_cornerTopLeft"></td>
+            <td class="rt_lineTop"></td>
+            <td class="rt_cornerTopRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_lineLeft"></td>
+            <td class="rt_content">
+               <table class="component">
+                  <tbody>
+                     <tr>
+                        <td class="firstColumn"><b>Namespace</b></td>
+                        <td>No namespace</td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Diagram</b></div>
+                           <div class="floatRight"><input id="button_diagram_hotstring_hotStringOptions" type="image" src="img/btM.gif" value="-" onclick="switchState('diagram_hotstring_hotStringOptions');" class="control" /></div>
+                        </td>
+                        <td class="diagram">
+                           <div id="diagram_hotstring_hotStringOptions" style="display:block"><img alt="Diagram" border="0" src="img/plugin_xsd_Element_hotStringOptions.jpeg" usemap="#plugin_xsd_Element_hotStringOptions" /><map name="plugin_xsd_Element_hotStringOptions" id="plugin_xsd_Element_hotStringOptions">
+                                 <area alt="plugin_xsd_Element_hotstring.tmp#hotstring_hotstring_hotStringOptions_hotStringOption" href="plugin_xsd_Element_hotstring.html#hotstring_hotstring_hotStringOptions_hotStringOption" coords="230,6,335,31" /></map></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Properties</b></div>
+                           <div class="floatRight"><input id="button_properties_hotstring_hotStringOptions" type="image" src="img/btM.gif" value="-" onclick="switchState('properties_hotstring_hotStringOptions');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="properties_hotstring_hotStringOptions" style="display:block">
+                              <table class="propertiesTable">
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">content</td>
+                                    <td><b>complex</b></td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">minOccurs</td>
+                                    <td><b>0</b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Model</b><div class="floatRight"><input id="button_model_hotstring_hotStringOptions" type="image" src="img/btM.gif" value="-" onclick="switchState('model_hotstring_hotStringOptions');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="model_hotstring_hotStringOptions" style="display:block"><b><a href="plugin_xsd_Element_hotstring.html#hotstring_hotstring_hotStringOptions_hotStringOption" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotStringOption*')">hotStringOption*</a></b></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Children</b></td>
+                        <td><b><a href="plugin_xsd_Element_hotstring.html#hotstring_hotstring_hotStringOptions_hotStringOption" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotStringOption')">hotStringOption</a></b></td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Instance</b></div>
+                           <div class="floatRight"><input id="button_instance_hotstring_hotStringOptions" type="image" src="img/btM.gif" value="-" onclick="switchState('instance_hotstring_hotStringOptions');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="instance_hotstring_hotStringOptions" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;hotStringOptions</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;hotStringOption</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">{0,unbounded}</span><span class="tEl">&lt;/hotStringOption&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/hotStringOptions&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Source</b></div>
+                           <div class="floatRight"><input id="button_source_hotstring_hotStringOptions" type="image" src="img/btM.gif" value="-" onclick="switchState('source_hotstring_hotStringOptions');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="source_hotstring_hotStringOptions" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;xs:element</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"hotStringOptions"</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;xs:complexType</span><span class="tEl">&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:sequence</span><span class="tEl">&gt;</span><span class="tI">
+      </span><span class="tEl">&lt;xs:element</span><span class="tAN"> maxOccurs=</span><span class="tAV">"unbounded"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"hotStringOption"</span><span class="tAN"> type=</span><span class="tAV">"HotStringOptionsEnum"</span><span class="tEl">/&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;/xs:sequence&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;/xs:complexType&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;xs:unique</span><span class="tAN"> name=</span><span class="tAV">"hotStringOption_unique"</span><span class="tEl">&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:selector</span><span class="tAN"> xpath=</span><span class="tAV">"hotStringOption"</span><span class="tEl">/&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:field</span><span class="tAN"> xpath=</span><span class="tAV">"."</span><span class="tEl">/&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;/xs:unique&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/xs:element&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </td>
+            <td class="rt_lineRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_cornerBottomLeft"></td>
+            <td class="rt_lineBottom"></td>
+            <td class="rt_cornerBottomRight"></td>
+         </tr>
+      </table><a id="hotstring_hotstring_hotStringOptions_hotStringOption"></a><div class="componentTitle">Element <span class="qname"><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b> / <b><a href="plugin_xsd_Element_hotstring.html#hotstring_hotStringOptions" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotStringOptions')">hotStringOptions</a></b> / hotStringOption</span></div>
+      <table class="rt">
+         <tr>
+            <td class="rt_cornerTopLeft"></td>
+            <td class="rt_lineTop"></td>
+            <td class="rt_cornerTopRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_lineLeft"></td>
+            <td class="rt_content">
+               <table class="component">
+                  <tbody>
+                     <tr>
+                        <td class="firstColumn"><b>Namespace</b></td>
+                        <td>No namespace</td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Diagram</b></div>
+                           <div class="floatRight"><input id="button_diagram_hotstring_hotstring_hotStringOptions_hotStringOption" type="image" src="img/btM.gif" value="-" onclick="switchState('diagram_hotstring_hotstring_hotStringOptions_hotStringOption');" class="control" /></div>
+                        </td>
+                        <td class="diagram">
+                           <div id="diagram_hotstring_hotstring_hotStringOptions_hotStringOption" style="display:block"><img alt="Diagram" border="0" src="img/plugin_xsd_Element_hotStringOption.jpeg" usemap="#plugin_xsd_Element_hotStringOption" /><map name="plugin_xsd_Element_hotStringOption" id="plugin_xsd_Element_hotStringOption">
+                                 <area alt="plugin_xsd_Simple_Type_HotStringOptionsEnum.tmp#HotStringOptionsEnum" href="plugin_xsd_Simple_Type_HotStringOptionsEnum.html#HotStringOptionsEnum" coords="133,0,295,26" /></map></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Type</b></td>
+                        <td><b><a href="plugin_xsd_Simple_Type_HotStringOptionsEnum.html#HotStringOptionsEnum" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component HotStringOptionsEnum')">HotStringOptionsEnum</a></b></td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Properties</b></div>
+                           <div class="floatRight"><input id="button_properties_hotstring_hotstring_hotStringOptions_hotStringOption" type="image" src="img/btM.gif" value="-" onclick="switchState('properties_hotstring_hotstring_hotStringOptions_hotStringOption');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="properties_hotstring_hotstring_hotStringOptions_hotStringOption" style="display:block">
+                              <table class="propertiesTable">
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">content</td>
+                                    <td><b>simple</b></td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">minOccurs</td>
+                                    <td><b>0</b></td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">maxOccurs</td>
+                                    <td><b>unbounded</b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Facets</b></div>
+                           <div class="floatRight"><input id="button_facets_hotstring_hotstring_hotStringOptions_hotStringOption" type="image" src="img/btM.gif" value="-" onclick="switchState('facets_hotstring_hotstring_hotStringOptions_hotStringOption');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="facets_hotstring_hotstring_hotStringOptions_hotStringOption" style="display:block">
+                              <table class="facetsTable">
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>TriggerInside</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>AutomaticBackSpaceOff</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>CaseSensitive</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>NoConform</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>OmitEndChar</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>Send</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>SendRaw</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>SendInput</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>SendPlay</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>SendEvent</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td class="firstColumn">enumeration</td>
+                                    <td width="30%"><b>ResetRecognizer</b></td>
+                                    <td>
+                                       <div class="annotation"></div>
+                                    </td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Source</b></div>
+                           <div class="floatRight"><input id="button_source_hotstring_hotstring_hotStringOptions_hotStringOption" type="image" src="img/btM.gif" value="-" onclick="switchState('source_hotstring_hotstring_hotStringOptions_hotStringOption');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="source_hotstring_hotstring_hotStringOptions_hotStringOption" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;xs:element</span><span class="tAN"> maxOccurs=</span><span class="tAV">"unbounded"</span><span class="tAN"> minOccurs=</span><span class="tAV">"0"</span><span class="tAN"> name=</span><span class="tAV">"hotStringOption"</span><span class="tAN"> type=</span><span class="tAV">"HotStringOptionsEnum"</span><span class="tEl">/&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </td>
+            <td class="rt_lineRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_cornerBottomLeft"></td>
+            <td class="rt_lineBottom"></td>
+            <td class="rt_cornerBottomRight"></td>
+         </tr>
+      </table><a id="hotstring_trigger"></a><div class="componentTitle">Attribute <span class="qname"><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b> / @trigger</span></div>
+      <table class="rt">
+         <tr>
+            <td class="rt_cornerTopLeft"></td>
+            <td class="rt_lineTop"></td>
+            <td class="rt_cornerTopRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_lineLeft"></td>
+            <td class="rt_content">
+               <table class="component">
+                  <tbody>
+                     <tr>
+                        <td class="firstColumn"><b>Namespace</b></td>
+                        <td>No namespace</td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Annotations</b></div>
+                           <div class="floatRight"><input id="button_annotations_hotstring_trigger" type="image" src="img/btM.gif" value="-" onclick="switchState('annotations_hotstring_trigger');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="annotations_hotstring_trigger" style="display:block">
+                              <div class="annotation">
+                                 <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                    <tr>
+                                       <td width="100%"><pre><span class="tT">The sequence of typed keys that triggers the hotstring. This must be in</span><span class="tI">
+</span><span class="tT">a format that would be accepted by AutoHotkey. Eg:hw</span></pre></td>
+                                    </tr>
+                                 </table>
+                              </div>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Type</b></td>
+                        <td><b>xs:string</b></td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Properties</b></div>
+                           <div class="floatRight"><input id="button_properties_hotstring_trigger" type="image" src="img/btM.gif" value="-" onclick="switchState('properties_hotstring_trigger');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="properties_hotstring_trigger" style="display:block">
+                              <table class="propertiesTable">
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">use</td>
+                                    <td><b>required</b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Used by</b></div>
+                           <div class="floatRight"><input id="button_usedBy_hotstring_trigger" type="image" src="img/btM.gif" value="-" onclick="switchState('usedBy_hotstring_trigger');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="usedBy_hotstring_trigger" style="display:block">
+                              <table class="usedByTable">
+                                 <tr>
+                                    <td class="firstColumn">Element </td>
+                                    <td><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Source</b></div>
+                           <div class="floatRight"><input id="button_source_hotstring_trigger" type="image" src="img/btM.gif" value="-" onclick="switchState('source_hotstring_trigger');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="source_hotstring_trigger" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;xs:attribute</span><span class="tAN"> name=</span><span class="tAV">"trigger"</span><span class="tAN"> use=</span><span class="tAV">"required"</span><span class="tAN"> type=</span><span class="tAV">"xs:string"</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The sequence of typed keys that triggers the hotstring. This must be in a format that would be accepted by AutoHotkey. Eg:hw</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/xs:attribute&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </td>
+            <td class="rt_lineRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_cornerBottomLeft"></td>
+            <td class="rt_lineBottom"></td>
+            <td class="rt_cornerBottomRight"></td>
+         </tr>
+      </table><a id="hotstring_enabled"></a><div class="componentTitle">Attribute <span class="qname"><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b> / @enabled</span></div>
+      <table class="rt">
+         <tr>
+            <td class="rt_cornerTopLeft"></td>
+            <td class="rt_lineTop"></td>
+            <td class="rt_cornerTopRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_lineLeft"></td>
+            <td class="rt_content">
+               <table class="component">
+                  <tbody>
+                     <tr>
+                        <td class="firstColumn"><b>Namespace</b></td>
+                        <td>No namespace</td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Annotations</b></div>
+                           <div class="floatRight"><input id="button_annotations_hotstring_enabled" type="image" src="img/btM.gif" value="-" onclick="switchState('annotations_hotstring_enabled');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="annotations_hotstring_enabled" style="display:block">
+                              <div class="annotation">
+                                 <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                    <tr>
+                                       <td width="100%"><pre><span class="tT">The State of the Hotstring (enabled or disabled). If disabled then this</span><span class="tI">
+</span><span class="tT">hotstring will be ignored for a match.</span></pre></td>
+                                    </tr>
+                                 </table>
+                              </div>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn"><b>Type</b></td>
+                        <td><b>xs:boolean</b></td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Properties</b></div>
+                           <div class="floatRight"><input id="button_properties_hotstring_enabled" type="image" src="img/btM.gif" value="-" onclick="switchState('properties_hotstring_enabled');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="properties_hotstring_enabled" style="display:block">
+                              <table class="propertiesTable">
+                                 <tr>
+                                    <td class="firstColumn" style="white-space: nowrap;">default</td>
+                                    <td><b>true</b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Used by</b></div>
+                           <div class="floatRight"><input id="button_usedBy_hotstring_enabled" type="image" src="img/btM.gif" value="-" onclick="switchState('usedBy_hotstring_enabled');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="usedBy_hotstring_enabled" style="display:block">
+                              <table class="usedByTable">
+                                 <tr>
+                                    <td class="firstColumn">Element </td>
+                                    <td><b><a href="plugin_xsd_Element_hotstring.html#hotstring" target="mainFrame" title="No namespace" onclick="updatePageTitle('Schema documentation for component hotstring')">hotstring</a></b></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="firstColumn">
+                           <div class="floatLeft"><b>Source</b></div>
+                           <div class="floatRight"><input id="button_source_hotstring_enabled" type="image" src="img/btM.gif" value="-" onclick="switchState('source_hotstring_enabled');" class="control" /></div>
+                        </td>
+                        <td>
+                           <div id="source_hotstring_enabled" style="display:block">
+                              <table style="table-layout:fixed;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;_white-space:pre;" class="preWrapContainer">
+                                 <tr>
+                                    <td width="100%"><pre><span class="tEl">&lt;xs:attribute</span><span class="tAN"> default=</span><span class="tAV">"true"</span><span class="tAN"> name=</span><span class="tAV">"enabled"</span><span class="tAN"> type=</span><span class="tAV">"xs:boolean"</span><span class="tEl">&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;xs:annotation</span><span class="tEl">&gt;</span><span class="tI">
+    </span><span class="tEl">&lt;xs:documentation</span><span class="tEl">&gt;</span><span class="tT" style="white-space:normal">The State of the Hotstring (enabled or disabled). If disabled then this hotstring will be ignored for a match.</span><span class="tEl">&lt;/xs:documentation&gt;</span><span class="tI">
+  </span><span class="tEl">&lt;/xs:annotation&gt;</span><span class="tI">
+</span><span class="tEl">&lt;/xs:attribute&gt;</span></pre></td>
+                                 </tr>
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </td>
+            <td class="rt_lineRight"></td>
+         </tr>
+         <tr>
+            <td class="rt_cornerBottomLeft"></td>
+            <td class="rt_lineBottom"></td>
+            <td class="rt_cornerBottomRight"></td>
+         </tr>
+      </table>
+      <div class="footer">
+         <hr />
+         <div align="center">XML Schema documentation generated by <a href="http://www.oxygenxml.com" target="_parent"><span class="oXygenLogo"><span class="redX">&lt;</span>o<span class="redX">X</span>ygen<span class="redX">/&gt;</span></span></a><sup>®</sup> XML Developer.
+         </div>
+      </div><script type="text/javascript">
+         <!--
+                     // The namespace is the selected option in the TOC combo.
+                    
+                     // Floats the toolbar.
+                     var globalControls = getElementObject("global_controls"); 
+                     
+                     if(globalControls != null){
+	                     var browser=navigator.appName;
+						 var version = parseFloat(navigator.appVersion.split('MSIE')[1]);
+						 
+						 var IE6 = false;
+						 if ((browser=="Microsoft Internet Explorer") && (version < 7)){
+						 	IE6 = true;
+						 }
+	
+	                     //alert (IE6 + " |V| " + version);
+	                     
+	                     if(IE6){
+	                     	// On IE 6 the 'fixed' property is not supported. We must use javascript. 
+	                         globalControls.style.position='absolute';                         
+	                         // The global controls will do not exist in the TOC frame, when chunking.
+	                         findAndFloat("global_controls", 225, 30);    
+	                     } else {
+	                      	  globalControls.style.position='fixed';                     	
+	                     }
+	                     
+	                     globalControls.style.right='0';                       
+                     }
+                //--></script></body>
+</html>
